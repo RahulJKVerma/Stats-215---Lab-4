@@ -46,13 +46,6 @@ getTrainTest = function(list.images, train.percentage = 0.60)
 l = getTrainTest(list(image1, image2))
 train = l[[1]]; test = l[[2]]; rm(l);
 
-#########################################################################
-####### Selecting NDAI, SD and DF as the features used for classification
-#########################################################################
-
-
-
-
 
 #########################################################################
 ####### Selecting NDAI, SD and DF as the features used for classification
