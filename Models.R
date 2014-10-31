@@ -1,4 +1,5 @@
 library(nnet)
+library(MASS)
 setwd("~/Dropbox/School/ST215/Lab/lab4/")
 source("DataProcessing.R")
 source("PerformanceMetrics.R")
@@ -28,3 +29,14 @@ logreg.fit = multinom(label ~ NDAI + SD + CORR + DF + CF +
                       data = train)
 label.hat2 = as.numeric(predict(logreg.fit, test))
 accuracy(label.hat2, test$label)
+meanError(label.hat2, test$label)
+
+#######################################################################
+### 3. Ordered Logit
+#######################################################################
+ordlog.fit = polr(factor(label) ~ NDAI + SD + CORR + DF + CF +
+                    BF   + AF + AN + logSD, data = train, method = "logistic")
+label.hat3 = as.numeric(predict(ordlog.fit, test))
+accuracy(label.hat3, test$label)
+meanError(label.hat3, test$label)
+
