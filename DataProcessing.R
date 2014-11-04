@@ -8,17 +8,23 @@ options(max.print = 1000)
 image1 <- read.table('image1.txt', header=F)
 image2 <- read.table('image2.txt', header=F)
 image3 <- read.table('image3.txt', header=F)
-
+image1$k = 1
+image2$k = 2
+image3$k = 3
 # Add informative column names.
 collabs <- c('y','x','label','NDAI','SD','CORR','DF','CF','BF','AF','AN')
 names(image1) <- collabs
 names(image2) <- collabs
 names(image3) <- collabs
 rm(collabs)
-# Function to sample data. E.g. It uses 60% of rows from image1
-# and image2 randomly as train data, uses the remaining 40%
-# rows from image1 and image2 as test data. Image3 is kept
-# as a complete out of sample testing dataset. 
+
+##########################################################################
+### 2. Sample Data randomly in row
+### Function to sample data. E.g. It uses 60% of rows from image1
+### and image2 randomly as train data, uses the remaining 40%
+### rows from image1 and image2 as test data. Image3 is kept
+### as a complete out of sample testing dataset. 
+##########################################################################
 getTrainTest = function(list.images, train.percentage = 0.60, rid.zero = TRUE)
 {
   if (rid.zero)
@@ -43,9 +49,48 @@ getTrainTest = function(list.images, train.percentage = 0.60, rid.zero = TRUE)
     test  = rbind(test,  list.images[[i]][-train.index, ])
     i = i + 1
   }
+  if (rid.zero)
+  {
+    train$label = (1+train$label)/2
+    test$label  = (1+test$label)/2
+  }
   return(list(train, test))
 }
-l = getTrainTest(list(image1, image2))
+# l = getTrainTest(list(image1, image2))
+# train = l[[1]]; test = l[[2]]; rm(l);
+
+###########################################################################
+### 3. Sample the data in blocks (not in row). E.g. for each image, 
+### divide it into 3 by 3 small images. Then get 5 of these 9 blocks 
+### randomly. 
+###########################################################################
+getTrainTestBlock = function(list.images, k = 3, rid.zero = TRUE,
+                             train.percentage = 5/9)
+{
+  # Initialize result. 
+  train = data.frame(); test = data.frame()
+  for (img in list.images)
+  {
+    # Create a grid of k*k rectangular of the original images. 
+    # Sample some rectangular randomly from these k*k rectangular
+    # Column Block Index (0,1,...,k)
+    block.x = floor(k*(img$x - min(img$x))/(max(img$x)-min(img$x)+1))
+    # Row Block Index (0,1,...,k)
+    block.y = floor(k*(img$y - min(img$y))/(max(img$y)-min(img$y)+1))
+    # Aggregate Index (1,2,...,k^2)
+    block  = k*block.y+block.x + 1
+    # Pick 
+    train.blocks = sample(k^2, round(train.percentage*k^2))
+    print(train.blocks)
+    train = rbind(train, img[  block %in% train.blocks ,])
+    test  = rbind(test , img[!(block %in% train.blocks),])
+  }
+  if (rid.zero)
+  {
+    train = train[train$label != 0,]; 
+    test  = test[test$label != 0,]
+  }
+  return(list(train,test))
+}
+l = getTrainTestBlock(list(image1, image2, image3), k = 4)
 train = l[[1]]; test = l[[2]]; rm(l);
-
-

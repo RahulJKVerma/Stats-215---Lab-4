@@ -16,7 +16,7 @@ meanError = function(label, label.hat)
   (0.5*(t[1,2]+t[2,1]+t[2,3]+t[3,2])+t[1,3]+t[3,1])/sum(t)
 }
 
-cutOff = function(label, thres = 0.5)
+cutOff = function(label, thres = 0.5, k = 2)
 {
   # Given a number x, if x > thres, return 1,
   # if x < -thres, return -1.
@@ -24,7 +24,7 @@ cutOff = function(label, thres = 0.5)
   # where label > 0.5, set to 1, the rest 0
   x = (label > thres) + 0.0
   # where label < -0.5 set to -1 instead
-  x[label < -thres] = -1
+  if (k == 3) x[label < -thres] = -1
   x
 }
 
