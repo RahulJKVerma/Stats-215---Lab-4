@@ -65,12 +65,14 @@ getTrainTest = function(list.images, train.percentage = 0.60, rid.zero = TRUE)
 ### randomly. 
 ###########################################################################
 getTrainTestBlock = function(list.images, k = 3, rid.zero = TRUE,
-                             train.percentage = 5/9)
+                 train.percentage = 5/9, fix.random = FALSE)
 {
   # Initialize result. 
   train = data.frame(); test = data.frame()
+  i = 1
   for (img in list.images)
   {
+    if (fixed.random) set.seed(1)
     # Create a grid of k*k rectangular of the original images. 
     # Sample some rectangular randomly from these k*k rectangular
     # Column Block Index (0,1,...,k)
