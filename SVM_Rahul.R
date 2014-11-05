@@ -30,7 +30,7 @@ names(image2) <- collabs
 names(image3) <- collabs
 
 # Function to sample data
-getTrainTest = function(list.images, train.percentage = 0.20)
+getTrainTest = function(list.images, train.percentage = 0.60)
 {
   set.seed(1); n.images = length(list.images) 
   n.row = nrow(list.images[[1]])
@@ -98,3 +98,4 @@ svm.predict.cutoff <- cutOff(svm.predict)
 classification.tab <- table(pred = svm.predict.cutoff, true = test[,3])
 accuracy(svm.predict.cutoff, test[,3])
 classification.tab
+
