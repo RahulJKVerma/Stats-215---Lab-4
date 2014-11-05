@@ -1,4 +1,4 @@
-#setwd("~/Dropbox/School/ST215/Lab/lab4/")
+setwd("~/Dropbox/School/ST215/Lab/lab4/")
 options(max.print = 1000)
 
 #########################################################################
@@ -8,9 +8,7 @@ options(max.print = 1000)
 image1 <- read.table('image1.txt', header=F)
 image2 <- read.table('image2.txt', header=F)
 image3 <- read.table('image3.txt', header=F)
-image1$k = 1
-image2$k = 2
-image3$k = 3
+
 # Add informative column names.
 collabs <- c('y','x','label','NDAI','SD','CORR','DF','CF','BF','AF','AN')
 names(image1) <- collabs
@@ -65,14 +63,13 @@ getTrainTest = function(list.images, train.percentage = 0.60, rid.zero = TRUE)
 ### randomly. 
 ###########################################################################
 getTrainTestBlock = function(list.images, k = 3, rid.zero = TRUE,
-                 train.percentage = 5/9, fix.random = FALSE)
+                 train.pct = 5/9, fix.random = TRUE)
 {
   # Initialize result. 
-  train = data.frame(); test = data.frame()
-  i = 1
+  data = data.frame();
+  i = 0
   for (img in list.images)
   {
-    if (fix.random) set.seed(1)
     # Create a grid of k*k rectangular of the original images. 
     # Sample some rectangular randomly from these k*k rectangular
     # Column Block Index (0,1,...,k)
@@ -80,13 +77,17 @@ getTrainTestBlock = function(list.images, k = 3, rid.zero = TRUE,
     # Row Block Index (0,1,...,k)
     block.y = floor(k*(img$y - min(img$y))/(max(img$y)-min(img$y)+1))
     # Aggregate Index (1,2,...,k^2)
-    block  = k*block.y+block.x + 1
-    # Pick 
-    train.blocks = sample(k^2, round(train.percentage*k^2))
-    print(train.blocks)
-    train = rbind(train, img[  block %in% train.blocks ,])
-    test  = rbind(test , img[!(block %in% train.blocks),])
+    block  = k*block.y+block.x + 1 + i*k^2
+    img$blockid = block
+    data = rbind(data, img)
+    i = i + 1
   }
+  n.images = length(list.images)
+  if (fix.random) set.seed(1);
+  train.blocks = sample(n.images*k^2, round(train.pct*k^2*n.images))
+  train.idx = data$blockid %in% train.blocks
+  train = data[train.idx,]
+  test  = data[!train.idx,]
   if (rid.zero)
   {
     train = train[train$label != 0,]; 
@@ -94,5 +95,5 @@ getTrainTestBlock = function(list.images, k = 3, rid.zero = TRUE,
   }
   return(list(train,test))
 }
-l = getTrainTestBlock(list(image1, image2, image3), k = 4)
-train = l[[1]]; test = l[[2]]; rm(l);
+# l = getTrainTestBlock(list(image1, image2, image3),k=3, train.pct = 0/27)
+# train = l[[1]]; test = l[[2]]; rm(l);
