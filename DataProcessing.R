@@ -72,7 +72,7 @@ getTrainTestBlock = function(list.images, k = 3, rid.zero = TRUE,
   i = 1
   for (img in list.images)
   {
-    if (fixed.random) set.seed(1)
+    if (fix.random) set.seed(1)
     # Create a grid of k*k rectangular of the original images. 
     # Sample some rectangular randomly from these k*k rectangular
     # Column Block Index (0,1,...,k)
