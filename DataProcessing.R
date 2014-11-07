@@ -1,4 +1,4 @@
-setwd("~/Dropbox/School/ST215/Lab/lab4/")
+# setwd("~/Dropbox/School/ST215/Lab/lab4/")
 options(max.print = 1000)
 
 #########################################################################
