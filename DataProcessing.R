@@ -63,7 +63,7 @@ getTrainTest = function(list.images, train.percentage = 0.60, rid.zero = TRUE)
 ### randomly. 
 ###########################################################################
 getTrainTestBlock = function(list.images, k = 3, rid.zero = TRUE,
-                 train.pct = 5/9, fix.random = TRUE)
+                 train.pct = 5/9, fix.random = TRUE, standardize = TRUE)
 {
   # Initialize result. 
   data = data.frame();
@@ -95,10 +95,20 @@ getTrainTestBlock = function(list.images, k = 3, rid.zero = TRUE,
     train$label = (train$label + 1)/2
     test$label  = (test$label  + 1)/2
   }
+  if (standardize)
+  {
+    # train$SD = log(train$SD+1); test$SD = log(test$SD+1)
+    m = colMeans(train); s = sapply(train, sd); 
+    m[1:3] = 0; s[1:3] = 1; m[12] = 0; s[12] = 1
+    train = data.frame(scale(train, center = m, scale = s))
+    test  = data.frame(scale(test , center = m, scale = s))
+  }
   return(list(train,test))
 }
-# l = getTrainTestBlock(list(image1, image2, image3),k=3, train.pct = 0/27)
-# train = l[[1]]; test = l[[2]]; rm(l);
+ l = getTrainTestBlock(list(image1, image2, image3),k=3, 
+                       train.pct = 15/27, fix.random = TRUE, 
+                       standardize = TRUE)
+ train = l[[1]]; test = l[[2]]; rm(l);
 
 
 ### This function is only used in cross validation cv.glmnet
@@ -116,3 +126,4 @@ getFold = function(blockid)
   }
   res
 }
+

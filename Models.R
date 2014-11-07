@@ -20,7 +20,7 @@ train = l[[1]]; test = l[[2]]; rm(l);
 train$logSD = log(train$SD+1)
 test$logSD  = log(test$SD +1)
 linreg.fit = lm(label ~ NDAI + SD + CORR + DF + CF + 
-                        BF   + AF + AN + logSD, 
+                        BF   + AF + AN, 
                 data = train)
 label.hat = predict.lm(linreg.fit, test)
 ### Measuring Linear Regression Performance
@@ -36,9 +36,18 @@ cutOffGridSearch(test$label, label.hat, method = accuracy)
 logreg.fit = glm(label ~ NDAI + SD + CORR + DF + CF +
                               BF   + AF + AN,
                       data = train, family = binomial(link = "logit"))
-label.hat2 = as.numeric(predict(logreg.fit, test, type = "response"))
+label.hat2 = predict(logreg.fit, test, type = "response")
 auc(test$label, label.hat2)
 accuracy(cutOff(label.hat2), test$label)
+
+### 2.1. Polynomial Logistic
+logpol.fit = glm(label ~ (NDAI + SD + CORR + DF + CF +
+                            BF   + AF + AN )^2,
+                 data = train, family = binomial(link = "logit"))
+label.hat21 = as.numeric(predict(logpol.fit, test, type = "response"))
+auc(test$label, label.hat21)
+accuracy(cutOff(label.hat21), test$label)
+
 
 #######################################################################
 ### 3. Ordered Logit. For 3 classes only
@@ -52,34 +61,37 @@ meanError(label.hat3, test$label)
 #######################################################################
 ### 4. GLMNET
 #######################################################################
+ld = c(1,0.5,0.2,0.1,0.05,0.02,0.01,0.005,0.002,0.001,0.0005,0.0002,0.0001,
+       5e-5, 2e-5, 1e-5, 5e-6, 2e-6, 1e-6)
 glmnet.fit = glmnet(as.matrix(train[,4:11]), as.numeric(train[,3]), 
                     family = "binomial", standardize = TRUE, 
-                    intercept = TRUE)
+                    intercept = TRUE, lambda = ld)
 # label.hat4 is a matrix, each column is one possible yhat, for a 
 # corresponding lambda - regularization parameter. 100 columns in total
 label.hat4 = predict(glmnet.fit, as.matrix(test[,4:11]), type = "response")
-accuracy(cutOff(label.hat4[,40]), test$label)
+sapply(1:length(ld), function(i) auc(test$label, label.hat4[,i]))
+
+### 4.2. CVGLMNET
 system.time((
-cvglm.fit = cv.glmnet(as.matrix(train[,4:11]), 
+cvglm.fit2 = cv.glmnet(as.matrix(train[,4:11]), 
                       as.numeric(train[,3]), family = "binomial",
-                      standardize = TRUE, intercept = TRUE,
+                      standardize = FALSE, intercept = FALSE,
                       type.measure = "auc",
-                      foldid = getFold(train$blockid),
+                      foldid = ceiling(getFold(train$blockid)/3),
                       parallel = FALSE)
 ))
-label.hat6 = predict(cvglm.fit, as.matrix(test[,4:11]), type = "response")
-auc(test$label, label.hat6)
-accuracy(cutOff(label.hat6), test$label)
+label.hat42 = predict(cvglm.fit2, as.matrix(test[,4:11]), type = "response")
+auc(test$label, label.hat42)
+accuracy(cutOff(label.hat42), test$label)
 
-########################################################################
-### 5. Polynomial Logistic
-########################################################################
-logpol.fit = glm(label ~ (NDAI + SD + CORR + DF + CF +
-                        BF   + AF + AN )^2,
-                      data = train, family = binomial(link = "logit"))
-label.hat5 = as.numeric(predict(logpol.fit, test, type = "response"))
-
-auc(test$label, label.hat5)
-accuracy(cutOff(label.hat5), test$label)
-
-
+### 4.3. GLMNET Polynomial
+cvglm.fit3 = cv.glmnet(model.matrix(~ (NDAI + SD + CORR + DF + CF +
+                                      BF + AF + AN - 1), train), 
+                       as.numeric(train[,3]), family = "binomial",
+                       standardize = FALSE, intercept = FALSE,
+                       type.measure = "auc",
+                       foldid = ceiling(getFold(train$blockid)/3),
+                       parallel = FALSE)
+label.hat43 = predict(cvglm.fit3, model.matrix(~ (NDAI + SD + CORR + 
+                      DF + CF + BF + AF + AN - 1), test), type = "response")
+auc(test$label, label.hat43)
