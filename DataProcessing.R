@@ -92,8 +92,27 @@ getTrainTestBlock = function(list.images, k = 3, rid.zero = TRUE,
   {
     train = train[train$label != 0,]; 
     test  = test[test$label != 0,]
+    train$label = (train$label + 1)/2
+    test$label  = (test$label  + 1)/2
   }
   return(list(train,test))
 }
 # l = getTrainTestBlock(list(image1, image2, image3),k=3, train.pct = 0/27)
 # train = l[[1]]; test = l[[2]]; rm(l);
+
+
+### This function is only used in cross validation cv.glmnet
+### It renames a vector of integer so that values are drawed 
+### from 1 to n.
+# E.g. 2,2,3,6,6,6,6,100,3,3,2 -> 
+#      1,1,2,3,3,3,3,4,2,2,1
+getFold = function(blockid)
+{
+  res = rep(0, length(blockid))
+  l = unique(blockid)
+  for (i in 1:length(l))
+  {
+    res[blockid == l[i]] = i
+  }
+  res
+}

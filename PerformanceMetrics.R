@@ -51,3 +51,51 @@ cutOffGridSearch = function(label, label.hat, method = accuracy)
   thres[s == extreme(s)][1]
 }
 
+CalculateTPR <- function(thresh, preds, truth) {
+  as.numeric(sum(preds[truth] > thresh) / sum(truth))
+}
+
+CalculateFPR <- function(thresh, preds, truth) {
+  as.numeric(sum(preds[!truth] > thresh) / sum(!truth))
+}
+
+# Don't use this. Way too slow. O(n^2)
+auc2 <- function(truth, preds)
+{
+  positive.classifications <- sapply(preds[!truth],
+  FUN = function(threshold) { CalculateFPR(threshold, preds, !truth) })
+  sum(positive.classifications) / sum(!truth)
+}
+
+# Improved version of auc2. O(nlog(n))
+auc3 <- function(truth, preds)
+{
+  r = truth[order(preds)]
+  n.truth = sum(r); n = length(r)
+  sum(n.truth - cumsum(r)[!as.logical(r)])/n.truth/(length(r)-n.truth)
+}
+
+# Benchmark result
+benchmark.auc = function()
+{
+  truth = rbinom(1e4,1,0.5)
+  preds = runif(1e4,-2,2)
+  print(system.time(print(pROC::auc(truth, preds))))
+  print(system.time(print(glmnet::auc(truth, preds))))
+  print(system.time(print(auc2(truth, preds))))
+  print(system.time(print(auc3(truth, preds)))) 
+  # Area under the curve: 0.5018
+  # user  system elapsed 
+  # 0.679   0.168   0.856 
+  # [1] 0.4981974
+  # user  system elapsed 
+  # 0.003   0.000   0.004 
+  # [1] 0.4981974
+  # user  system elapsed 
+  # 2.425   0.385   2.817 
+  # [1] 0.4981974
+  # user  system elapsed 
+  # 0.003   0.001   0.003 
+}
+# benchmark.auc()
+aucs = function(truth, preds) 2*glmnet::auc(truth, preds)-1
