@@ -106,8 +106,8 @@ getTrainTestBlock = function(list.images, k = 3, rid.zero = TRUE,
   return(list(train,test))
 }
 # l = getTrainTestBlock(list(image1, image2, image3),k=3, 
-                       train.pct = 15/27, fix.random = TRUE, 
-                       standardize = TRUE)
+#                       train.pct = 15/27, fix.random = TRUE, 
+#                       standardize = TRUE)
 # train = l[[1]]; test = l[[2]]; rm(l);
 
 

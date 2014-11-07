@@ -13,7 +13,7 @@ registerDoParallel(nCores)
 source("DataProcessing.R")
 l = getTrainTestBlock(list(image1, image2, image3),k=3, train.pct = 1,
                       fix.random = TRUE)
-data = l[[1]]; rm(l);
+data = l[[1]]; rm(l); rm(image1); rm(image2); rm(image3)
 head(data)
 k = 3; n.images = 3;
 RNGkind("L'Ecuyer-CMRG")

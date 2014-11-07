@@ -26,7 +26,7 @@ out <- foreach(i = 1:200) %dopar% {
                       as.numeric(data[train.idx,3]), family = "binomial",
                       standardize = FALSE, intercept = FALSE,
                       type.measure = "auc",
-                      foldid = ceiling(getFold(train$blockid)/3),
+                      foldid = ceiling(getFold(data$blockid[train.idx])/3),
                       parallel = FALSE)
   label.hat = predict(model, model.matrix(~ (NDAI + SD + CORR + DF + CF + 
                       BF + AF + AN)^2, data[!train.idx,]), type = "response")
