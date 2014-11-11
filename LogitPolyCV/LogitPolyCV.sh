@@ -1,4 +1,4 @@
 #!/bin/bash
-#export OMP_NUM_THREADS=$NSLOTS
+export OMP_NUM_THREADS=$NSLOTS
 R CMD BATCH --no-save LogitPolyCV.R LogitPolyCV.out
 

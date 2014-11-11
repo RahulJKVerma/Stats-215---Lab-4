@@ -5,8 +5,8 @@ library(rlecuyer)
 library(glmnet)
 
 working.directory = "~/Documents/lab4/Stats-215---Lab-4"
-# nCores <- as.numeric(Sys.getenv('NSLOTS'))
-nCores = 6
+nCores <- as.numeric(Sys.getenv('NSLOTS'))
+# nCores = 6
 setwd(working.directory)
 registerDoParallel(nCores)
 
@@ -30,7 +30,7 @@ out <- foreach(i = 1:200) %dopar% {
                       parallel = FALSE)
   label.hat = predict(model, model.matrix(~ (NDAI + SD + CORR + DF + CF + 
                       BF + AF + AN)^2, data[!train.idx,]), type = "response")
-  auc(data[!train.idx,3], label.hat)
+  glmnet::auc(data[!train.idx,3], label.hat)
 }
 print(mean(unlist(out)))
 save(out,file = "LogitPolyCV.RData")

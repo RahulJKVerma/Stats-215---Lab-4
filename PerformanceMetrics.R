@@ -1,7 +1,7 @@
 library(pROC)
 library(glmnet)
 library(ggplot2)
-
+auc = glmnet::auc
 accuracy = function(label, label.hat)
 {
   # Return the percentage of time predicting correctly
