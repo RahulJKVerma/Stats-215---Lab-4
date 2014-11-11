@@ -1,0 +1,172 @@
+---
+title: "Lab 4- Cloud Identification"
+author: "Huang Trong, Rahul Verma, Andre Waschka"
+date: "November 7, 2014"
+output: html_document
+---
+
+#1. Introduction
+
+When it comes to understanding and predicting global climate change, identification of cloud cover is a vital portion of the equation. To do this, scientists create algorithms using satellite images to distingush between clouds and non-clouds. Since most of these models use the reflecting light from the sun as a primary distingusher, clouds are easy to identify because they reflect light at a much higher rate than land or ocean. However, an issue arises when trying to identify cloud cover in polar regions. This is due to the snow and ice reflecting sun in a similar way to clouds and thus making differentiation much more difficult. Our goal is to use the few images that we have that were labeled by an expert to train a model to be able to identify clouds vs non-clouds in polar regions.
+
+#2. Exploratory Data Analysis
+
+```{r,echo=FALSE,message=FALSE}
+library(dplyr)
+library(ggplot2)
+
+
+#setwd("/Users/andrewaschka/Desktop/Cloud/Stats-215---Lab-4")
+setwd("~/Dropbox/School/ST215/lab4p/")
+# Get the data for three images
+
+image1 <- read.table('image1.txt', header=F)
+image2 <- read.table('image2.txt', header=F)
+image3 <- read.table('image3.txt', header=F)
+
+# Add informative column names.
+collabs <- c('y','x','label','NDAI','SD','CORR','DF','CF','BF','AF','AN')
+names(image1) <- collabs
+names(image2) <- collabs
+names(image3) <- collabs
+
+```
+
+
+###EDA-Visually
+
+```{r,echo=FALSE, fig.width=3, fig.height=3}
+#For Image 1
+# Class conditional densities.
+ggplot(image1) + geom_density(aes(x=DF, group=factor(label), fill=factor(label)), alpha=0.5)
+ggplot(image1) + geom_density(aes(x=CF, group=factor(label), fill=factor(label)), alpha=0.5)
+ggplot(image1) + geom_density(aes(x=BF, group=factor(label), fill=factor(label)), alpha=0.5)
+ggplot(image1) + geom_density(aes(x=AF, group=factor(label), fill=factor(label)), alpha=0.5)
+ggplot(image1) + geom_density(aes(x=AN, group=factor(label), fill=factor(label)), alpha=0.5)
+
+
+
+```
+
+We decided that the best way to try and visually observe which camera angle was optimal was to look When we look visually at the conditional densities for each camera angle we found that the AF angle was the best.
+
+###EDA -Quantitatively
+
+#3. Modeling
+
+# Accuracy and AUC
+In term of performance measure, accuracy is a simple yet effective measurement. It simpy means the percentage of time your model classifies correctly. The only downside is that most model return a probability based prediction, and accuracy depends on the threshold at which one cut the probability to classify as positive and negative. One way to fix this dependence on threshold is to pick the threshold with the best possible accuracy. 
+
+The other way is to use area under curve (AUC) of the ROC curve. This measure is independent of threshold. The continuous variable (predictor) does not need to be between 0 and 1. On the down side, AUC is hard to generalize for the case of more than two classes. Also, naive AUC calculation that is based on rectangular approximation can be slow, at $O(n^2)$. If we use the probability based method, and sort the data with respect to the continuous variable, we can get $O(n\log n)$ time, as in the following function:
+
+```{r,echo=TRUE,message=FALSE}
+auc3 <- function(truth, preds)
+{
+  r = truth[order(preds)]
+  n.truth = sum(r); n = length(r)
+  sum(n.truth - cumsum(r)[!as.logical(r)])/n.truth/(length(r)-n.truth)
+}
+```
+#3.2. Overview of Classifiers
+When solving a classification problem, we are presented with an abundance of choices to make. Following is a broad breakdown by:
+
+I. Model
+
+  1. Linear Regression  
+  2. Logistic Regression  
+  3. LDA, QDA
+  4. SVM
+  5. naiveBayes
+  6. randomForest
+  7. neural network
+II. Feature Engineering
+  1. Include polynomial term, interactive term, e.g. $x_i ^2, x_i x_j$
+  2. Log-Rescale, squareroot rescale: $sign(x) \log (|x|+1)$, $sign(x) \sqrt(|x|)$
+III. Regularization
+  1. L1 loss, L1 then OLS on selected variables, OLS then L1 on selected variables
+  2. L2 loss
+  3. L1 + L2 (Elastic Net)
+  4. Adaptive L1 (weighted L1)
+  5. Forward stepwise, backward stepwise selection
+IV. Model Selection, Choosing Model Parameter
+  1. Cross Validation
+  2. AIC, AICc, BIC
+V. Performance Measure
+  1. AUC
+  2. Accuracy
+  3. Logloss, deviance, mutual information
+  4. F1 Score, Mean Average Precision, Cohen's Kappa
+VI. Optimization Algorithm
+  1. Gradient Descent family: Stochastic Gradient Descent, Coordinate Descent
+  2. Newton Method family: Quasi-Newton, BFGS
+  3. LARS (for L1 and Elastic Net)
+  
+Of course not all combination is possible, for example LAR algorithm is only applied for L1 and Elastic Net regularization. Still, we are left with a very wide range of options to choose from. For the scope of this lab, we won't have time to study and implement all the possible combination, and so we heuristically restrict ourselves to some specific set of options. 
+
+In term of models, we try to use Linear Regression, Logistic Regression, QDA, 
+SVM, and naiveBayes, with a focus on Logistic Regression and SVM. For Logistic 
+Regression, we include polynomial and interactive terms, use L1 regularization, with Cross Validation as the tool for picking the best regularization. Cross Validation uses Area Under Curve of ROC curve as a measure type. We use the "glmnet" package, which impliments Coordinate Descent algorithm. 
+
+For each model, we use all three images, each get broken down into 3 by 3 smaller blocks. There are 27 blocks in total. 15 blocks are chosen at random to be used as the training set, the remaining 12 blocks are used as the testing set. Each model is ran 200 times, and the histogram of AUC is reported. 
+
+Model Specification:
+Model 1: Linear Regression
+
+```
+linreg.fit = lm(label ~ NDAI + SD + CORR + DF + CF + 
+                        BF   + AF + AN, 
+                data = train)
+```
+
+Model 2: Logistic Regression
+```
+logreg.fit = glm(label ~ NDAI + SD + CORR + DF + CF +
+                        BF   + AF + AN,
+                      data = train, family = binomial(link = "logit"))
+```
+
+Model 3: naiveBayes
+```
+library(e1071)
+qda.fit = naiveBayes(label ~ NDAI + SD + CORR + DF + CF +
+                   BF   + AF + AN,
+                 data = train)
+```
+Model 4: Quadratic Discriminant Analysis
+```
+qda.fit = lda(label ~ NDAI + SD + CORR + DF + CF +
+                   BF   + AF + AN,
+                 data = train)
+```
+Model 5: Second Degree Polynomial Logistic Regression
+```
+logpol.fit = glm(label ~ (NDAI + SD + CORR + DF + CF +
+                            BF   + AF + AN )^2,
+                 data = train, family = binomial(link = "logit"))
+```
+Model 6: Logistic Regression with Cross Validation using AUC criterion.
+Data is normalized according to the train set here. We will discuss more 
+the cross validation method in Section ?? 
+```
+cvglm.fit = cv.glmnet(as.matrix(train[,4:11]), 
+                      as.numeric(train[,3]), family = "binomial",
+                      standardize = FALSE, intercept = FALSE,
+                      type.measure = "auc",
+                      foldid = ceiling(getFold(train$blockid)/3),
+                      parallel = FALSE)
+```
+Model 7: Similar to Model 4, but including interactive terms
+```
+cvglmpol.fit3 = cv.glmnet(model.matrix(~ (NDAI + SD + CORR + DF + CF +
+                                      BF + AF + AN - 1)^2, train), 
+                       as.numeric(train[,3]), family = "binomial",
+                       standardize = FALSE, intercept = FALSE,
+                       type.measure = "auc",
+                       foldid = ceiling(getFold(train$blockid)/3),
+                       parallel = FALSE)
+```
+
+Model 8: Support Vector Machine
+
+Following is the 
+###3.3. 

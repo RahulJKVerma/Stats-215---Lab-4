@@ -11,14 +11,13 @@ setwd("~/Dropbox/School/ST215/Lab/lab4/")
 
 source("DataProcessing.R")
 source("PerformanceMetrics.R")
-l = getTrainTestBlock(list(image1, image2, image3),k=3, train.pct = 15/27,
-                      fix.random = FALSE)
+l = getTrainTestBlock(list(image1, image2, image3), k = 3, 
+                      train.pct = 15/27, fix.random = TRUE, 
+                      standardize = TRUE)
 train = l[[1]]; test = l[[2]]; rm(l);
 ########################################################################
 ### 1. Linear Regression
 ########################################################################
-train$logSD = log(train$SD+1)
-test$logSD  = log(test$SD +1)
 linreg.fit = lm(label ~ NDAI + SD + CORR + DF + CF + 
                         BF   + AF + AN, 
                 data = train)
@@ -40,13 +39,16 @@ label.hat2 = predict(logreg.fit, test, type = "response")
 auc(test$label, label.hat2)
 accuracy(cutOff(label.hat2), test$label)
 
-### 2.1. Polynomial Logistic
+plot(label.hat2, test$label)
+ggplot() + geom_density(aes(x = label.hat2)) 
+
+### 2.2. Polynomial Logistic
 logpol.fit = glm(label ~ (NDAI + SD + CORR + DF + CF +
                             BF   + AF + AN )^2,
                  data = train, family = binomial(link = "logit"))
-label.hat21 = as.numeric(predict(logpol.fit, test, type = "response"))
-auc(test$label, label.hat21)
-accuracy(cutOff(label.hat21), test$label)
+label.hat22 = as.numeric(predict(logpol.fit, test, type = "response"))
+auc(test$label, label.hat22)
+accuracy(cutOff(label.hat22), test$label)
 
 
 #######################################################################
@@ -72,14 +74,12 @@ label.hat4 = predict(glmnet.fit, as.matrix(test[,4:11]), type = "response")
 sapply(1:length(ld), function(i) auc(test$label, label.hat4[,i]))
 
 ### 4.2. CVGLMNET
-system.time((
 cvglm.fit2 = cv.glmnet(as.matrix(train[,4:11]), 
                       as.numeric(train[,3]), family = "binomial",
                       standardize = FALSE, intercept = FALSE,
                       type.measure = "auc",
                       foldid = ceiling(getFold(train$blockid)/3),
                       parallel = FALSE)
-))
 label.hat42 = predict(cvglm.fit2, as.matrix(test[,4:11]), type = "response")
 auc(test$label, label.hat42)
 accuracy(cutOff(label.hat42), test$label)
@@ -95,3 +95,14 @@ cvglm.fit3 = cv.glmnet(model.matrix(~ (NDAI + SD + CORR + DF + CF +
 label.hat43 = predict(cvglm.fit3, model.matrix(~ (NDAI + SD + CORR + 
                       DF + CF + BF + AF + AN - 1), test), type = "response")
 auc(test$label, label.hat43)
+
+##########################################################################
+### 5. Linear Discriminant Analysis
+##########################################################################
+qda.fit = lda(label ~ NDAI + SD + CORR + DF + CF +
+                   BF   + AF + AN,
+                 data = train)
+label.hat5 = (predict(qda.fit, test))
+auc(test$label, label.hat5$x)
+accuracy(test$label, label.hat5$class)
+

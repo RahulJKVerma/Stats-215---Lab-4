@@ -5,8 +5,9 @@ library(rlecuyer)
 library(glmnet)
 
 working.directory = "~/Documents/lab4/Stats-215---Lab-4"
+working.directory = "~/Dropbox/School/ST215/lab4p/"
 # nCores <- as.numeric(Sys.getenv('NSLOTS'))
-nCores = 8
+nCores = 4
 setwd(working.directory)
 registerDoParallel(nCores)
 

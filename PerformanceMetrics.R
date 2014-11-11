@@ -1,3 +1,7 @@
+library(pROC)
+library(glmnet)
+library(ggplot2)
+
 accuracy = function(label, label.hat)
 {
   # Return the percentage of time predicting correctly
@@ -59,7 +63,8 @@ CalculateFPR <- function(thresh, preds, truth) {
   as.numeric(sum(preds[!truth] > thresh) / sum(!truth))
 }
 
-# Don't use this. Way too slow. O(n^2)
+# Don't use this. It is too slow. O(n^2).
+# It is here for demonstration purpose
 auc2 <- function(truth, preds)
 {
   positive.classifications <- sapply(preds[!truth],
@@ -72,14 +77,15 @@ auc3 <- function(truth, preds)
 {
   r = truth[order(preds)]
   n.truth = sum(r); n = length(r)
-  sum(n.truth - cumsum(r)[!as.logical(r)])/n.truth/(length(r)-n.truth)
+  sum(n.truth - cumsum(r)[!as.logical(r)])/n.truth/(length(r) - n.truth)
 }
 
-# Benchmark result
+# Benchmark result function
 benchmark.auc = function()
 {
-  truth = rbinom(1e4,1,0.5)
-  preds = runif(1e4,-2,2)
+  # How to call: benchmark.auc()
+  truth = rbinom(1e4, 1 ,0.5)
+  preds = runif(1e4, -2, 2)
   print(system.time(print(pROC::auc(truth, preds))))
   print(system.time(print(glmnet::auc(truth, preds))))
   print(system.time(print(auc2(truth, preds))))
@@ -97,5 +103,92 @@ benchmark.auc = function()
   # user  system elapsed 
   # 0.003   0.001   0.003 
 }
-# benchmark.auc()
+
+# This function rescale auc to have the same meaning like correlation
 aucs = function(truth, preds) 2*glmnet::auc(truth, preds)-1
+
+plot.missclassified = function(img.id = 1, preds = yhat, .train = train,
+                               .test = test, k = 3)
+{
+  # Args: 
+  #   img.id is the id of image, e.g. 1, 2, or 3
+  #   K is the number of partition of an image along each x and y axis
+  # Example:
+  # data = rbind(train, test)
+  # label.hat2 = predict(logreg.fit, data, type = "response")
+  # yhat = cutOff(label.hat2)
+  # plot.missclassified()
+  data = cbind(rbind(.train, .test), yhat)
+  blockids = seq((img.id - 1)*k^2 + 1, img.id*k^2)
+  plot1 = ggplot() + 
+    geom_point(data = data[data$blockid %in% blockids, ], 
+               aes(x = x, y = y, 
+                   color = factor(label + yhat))) + 
+    scale_color_discrete(guide = guide_legend(
+                                      title = NULL, 
+                                      direction = "horizontal",
+                                      label.position = "bottom",
+                                      label.hjust = 0.5, 
+                                      label.vjust = 0.5,
+                                      label.theme = element_text(angle = 90)), 
+                         label = c("True Negative","Type I, II Error",
+                                   "True Positive")) +
+    ggtitle(paste("Clasification Error for Image",img.id, 
+                  ". Black border region is train data"))
+  
+   
+  for (blockid in unique(.train$blockid))
+  {
+    if (blockid %in% blockids)
+    {
+      border = getBorder(blockid)
+      plot1 = plot1 + geom_path(data = border, aes(x = x, y = y ), color = "black")    
+    }
+  }
+  plot1
+}
+
+getBorder = function(blockid = 2, k =3, list.images = list(image1, image2, image3))
+{
+  # Given a blockid, this function return the four points of the rectangular
+  # surrounding that block of image. 
+  blockid = blockid - 1
+  img.id = floor((blockid)/(k^2))
+  xy = blockid - img.id*k^2
+  block.x = xy %% k
+  block.y = floor(xy/k)
+  img = list.images[[img.id + 1]]
+  xmin = min(img$x); xmax = max(img$x); xrange = (xmax - xmin)/k
+  ymin = min(img$y); ymax = max(img$y); yrange = (ymax - ymin)/k
+  x1 = xmin + block.x*xrange
+  x2 = xmin + (block.x + 1)*xrange
+  y1 = ymin + block.y*yrange
+  y2 = ymin + (block.y + 1)*yrange
+  return(data.frame(x = c(x1, x1, x2, x2, x1), y = c(y1, y2, y2, y1, y1)))
+}
+
+logitFun = function(p)
+{
+  log(p/(1-p))
+}
+plotLogoddTruthPreds = function(truth, preds, m = 100)
+{
+  # Args:
+  #   m is the number of points to evaluate the plot at
+  if (length(truth) != length(preds))
+  {
+    warning("Length of vector truth and probs must be equal")
+  }
+
+  ordered.truth = truth[order(preds)]
+  ordered.preds = preds[order(preds)]
+  n = length(truth)
+  interval.size = floor(n/m)
+  idx = seq(1, n, by = interval.size)
+  n.idx = length(idx)
+  # Num of positive in each interval divided by interval length
+  prob.truth = diff(cumsum(ordered.truth)[idx])/interval.size
+  logodd.truth = logitFun(prob.truth)
+  logodd.preds = diff(cumsum(ordered.preds)[idx])/interval.size
+  plot(logodd.preds, logodd.truth)
+}
