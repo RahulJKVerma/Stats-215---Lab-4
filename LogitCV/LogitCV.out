@@ -1,0 +1,122 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(parallel)
+> library(doParallel)
+Loading required package: foreach
+Loading required package: iterators
+> library(foreach)
+> library(rlecuyer)
+> library(glmnet)
+Loading required package: Matrix
+Loaded glmnet 1.9-8
+
+> 
+> working.directory = "~/Documents/lab4/Stats-215---Lab-4"
+> # working.directory = "~/Dropbox/School/ST215/lab4p"
+> # nCores <- as.numeric(Sys.getenv('NSLOTS'))
+> nCores = 6
+> setwd(working.directory)
+> registerDoParallel(nCores)
+> source("DataProcessing.R")
+> l = getTrainTestBlock(list(image1, image2, image3),k=3, train.pct = 1,
++                       fix.random = TRUE, standardize = TRUE)
+> data = l[[1]]; rm(l); rm(image1); rm(image2); rm(image3)
+> gc();
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1289772 68.9    2403845 128.4  1544394  82.5
+Vcells 4710785 36.0   18576626 141.8 23060062 176.0
+> 
+> k = 3; n.images = 3;
+> RNGkind("L'Ecuyer-CMRG")
+> out <- foreach(i = 1:200) %dopar% {
++   cat('Starting', i, 'th job.\n', sep = ' ')
++   train.blocks = sample(n.images*k^2, 15)
++   train.idx = data$blockid %in% train.blocks
++   model = cv.glmnet(as.matrix(data[train.idx,4:11]), 
++                       as.numeric(data[train.idx,3]), family = "binomial",
++                       standardize = FALSE, intercept = FALSE,
++                       type.measure = "auc",
++                       foldid = ceiling(getFold(data$blockid[train.idx])/3),
++                       parallel = FALSE)
++   label.hat = predict(model, as.matrix(data[!train.idx,4:11]), type = "response")
++   auc(data[!train.idx,3], label.hat)
++ }
+Starting 1 th job.
+Starting 2 th job.
+Starting 3 th job.
+Starting 4 th job.
+Starting 5 th job.
+Starting 6 th job.
+Starting 7 th job.
+Starting 11 th job.
+Starting 8 th job.
+Starting 9 th job.
+Starting 10 th job.
+Starting 12 th job.
+Starting 17 th job.
+Starting 14 th job.
+Starting 13 th job.
+Starting 15 th job.
+Starting 16 th job.
+Starting 23 th job.
+Starting 18 th job.
+Starting 20 th job.
+Starting 19 th job.
+Starting 22 th job.
+Starting 21 th job.
+Starting 24 th job.
+Starting 29 th job.
+Starting 25 th job.
+Starting 26 th job.
+Starting 27 th job.
+Starting 30 th job.
+Starting 28 th job.
+Starting 32 th job.
+Starting 35 th job.
+Starting 31 th job.
+Starting 33 th job.
+Starting 37 th job.
+Starting 38 th job.
+Starting 41 th job.
+Starting 36 th job.
+Starting 34 th job.
+Starting 39 th job.
+Starting 43 th job.
+Starting 47 th job.
+Starting 44 th job.
+Starting 42 th job.
+Starting 40 th job.
+Starting 45 th job.
+Starting 49 th job.
+Starting 50 th job.
+Starting 53 th job.
+Starting 48 th job.
+Starting 46 th job.
+Starting 51 th job.
+Starting 59 th job.
+Starting 55 th job.
+Starting 56 th job.
+Starting 57 th job.
+Starting 54 th job.
+Starting 52 th job.
+Starting 61 th job.
+Starting 62 th job.
+Starting 65 th job.
+Starting 63 th job.

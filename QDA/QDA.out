@@ -1,0 +1,859 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(parallel)
+> library(doParallel)
+Loading required package: foreach
+Loading required package: iterators
+> library(foreach)
+> library(rlecuyer)
+> library(glmnet)
+Loading required package: Matrix
+Loaded glmnet 1.9-8
+
+> library(MASS)
+> working.directory = "~/Documents/lab4/Stats-215---Lab-4"
+> # nCores <- as.numeric(Sys.getenv('NSLOTS'))
+> nCores = 4
+> setwd(working.directory)
+> registerDoParallel(nCores)
+> 
+> source("DataProcessing.R")
+> l = getTrainTestBlock(list(image1, image2, image3),k=3, train.pct = 1,
++                       fix.random = FALSE)
+> data = l[[1]]
+> 
+> k = 3; n.images = 3;
+> RNGkind("L'Ecuyer-CMRG")
+> out <- foreach(i = 1:200) %dopar% {
++   cat('Starting', i, 'th job.\n', sep = ' ')
++   train.blocks = sample(n.images*k^2, 15)
++   train.idx = data$blockid %in% train.blocks
++   model = qda(label ~ NDAI + SD + CORR + DF + CF + 
++                     BF   + AF + AN, 
++                   data = data[train.idx,])
++   label.hat = predict(model, data[!train.idx, ])
++   auc(data[!train.idx,3], label.hat$posterior[,2])
++ }
+Starting 1 th job.
+Starting 2 th job.
+Starting 3 th job.
+Starting 4 th job.
+Starting 7 th job.
+Starting 5 th job.
+Starting 8 th job.
+Starting 6 th job.
+Starting 11 th job.
+Starting 9 th job.
+Starting 10 th job.
+Starting 12 th job.
+Starting 13 th job.
+Starting 16 th job.
+Starting 15 th job.
+Starting 14 th job.
+Starting 17 th job.
+Starting 20 th job.
+Starting 18 th job.
+Starting 19 th job.
+Starting 21 th job.
+Starting 24 th job.
+Starting 22 th job.
+Starting 23 th job.
+Starting 25 th job.
+Starting 28 th job.
+Starting 27 th job.
+Starting 26 th job.
+Starting 29 th job.
+Starting 32 th job.
+Starting 30 th job.
+Starting 31 th job.
+Starting 36 th job.
+Starting 33 th job.
+Starting 37 th job.
+Starting 34 th job.
+Starting 40 th job.
+Starting 35 th job.
+Starting 41 th job.
+Starting 44 th job.
+Starting 39 th job.
+Starting 38 th job.
+Starting 48 th job.
+Starting 45 th job.
+Starting 42 th job.
+Starting 43 th job.
+Starting 52 th job.
+Starting 49 th job.
+Starting 46 th job.
+Starting 47 th job.
+Starting 56 th job.
+Starting 53 th job.
+Starting 50 th job.
+Starting 51 th job.
+Starting 57 th job.
+Starting 60 th job.
+Starting 54 th job.
+Starting 55 th job.
+Starting 64 th job.
+Starting 61 th job.
+Starting 58 th job.
+Starting 68 th job.
+Starting 59 th job.
+Starting 65 th job.
+Starting 62 th job.
+Starting 72 th job.
+Starting 63 th job.
+Starting 69 th job.
+Starting 66 th job.
+Starting 76 th job.
+Starting 67 th job.
+Starting 73 th job.
+Starting 70 th job.
+Starting 80 th job.
+Starting 71 th job.
+Starting 77 th job.
+Starting 74 th job.
+Starting 84 th job.
+Starting 75 th job.
+Starting 81 th job.
+Starting 78 th job.
+Starting 88 th job.
+Starting 79 th job.
+Starting 85 th job.
+Starting 92 th job.
+Starting 82 th job.
+Starting 83 th job.
+Starting 89 th job.
+Starting 96 th job.
+Starting 86 th job.
+Starting 87 th job.
+Starting 93 th job.
+Starting 100 th job.
+Starting 90 th job.
+Starting 104 th job.
+Starting 91 th job.
+Starting 97 th job.
+Starting 94 th job.
+Starting 95 th job.
+Starting 108 th job.
+Starting 101 th job.
+Starting 112 th job.
+Starting 98 th job.
+Starting 99 th job.
+Starting 105 th job.
+Starting 116 th job.
+Starting 103 th job.
+Starting 102 th job.
+Starting 109 th job.
+Starting 120 th job.
+Starting 106 th job.
+Starting 107 th job.
+Starting 113 th job.
+Starting 124 th job.
+Starting 110 th job.
+Starting 111 th job.
+Starting 117 th job.
+Starting 128 th job.
+Starting 114 th job.
+Starting 115 th job.
+Starting 121 th job.
+Starting 132 th job.
+Starting 119 th job.
+Starting 118 th job.
+Starting 136 th job.
+Starting 125 th job.
+Starting 123 th job.
+Starting 122 th job.
+Starting 140 th job.
+Starting 129 th job.
+Starting 127 th job.
+Starting 126 th job.
+Starting 144 th job.
+Starting 133 th job.
+Starting 131 th job.
+Starting 148 th job.
+Starting 130 th job.
+Starting 137 th job.
+Starting 152 th job.
+Starting 135 th job.
+Starting 134 th job.
+Starting 141 th job.
+Starting 156 th job.
+Starting 139 th job.
+Starting 138 th job.
+Starting 145 th job.
+Starting 160 th job.
+Starting 143 th job.
+Starting 142 th job.
+Starting 149 th job.
+Starting 164 th job.
+Starting 147 th job.
+Starting 146 th job.
+Starting 153 th job.
+Starting 168 th job.
+Starting 151 th job.
+Starting 150 th job.
+Starting 172 th job.
+Starting 157 th job.
+Starting 155 th job.
+Starting 154 th job.
+Starting 176 th job.
+Starting 159 th job.
+Starting 161 th job.
+Starting 180 th job.
+Starting 158 th job.
+Starting 163 th job.
+Starting 165 th job.
+Starting 184 th job.
+Starting 167 th job.
+Starting 162 th job.
+Starting 169 th job.
+Starting 188 th job.
+Starting 171 th job.
+Starting 166 th job.
+Starting 173 th job.
+Starting 192 th job.
+Starting 175 th job.
+Starting 170 th job.
+Starting 177 th job.
+Starting 196 th job.
+Starting 179 th job.
+Starting 200 th job.
+Starting 174 th job.
+Starting 181 th job.
+Starting 183 th job.
+Starting 178 th job.
+Starting 185 th job.
+Starting 187 th job.
+Starting 189 th job.
+Starting 182 th job.
+Starting 191 th job.
+Starting 186 th job.
+Starting 193 th job.
+Starting 195 th job.
+Starting 190 th job.
+Starting 197 th job.
+Starting 199 th job.
+Starting 194 th job.
+Starting 198 th job.
+> print(out)
+[[1]]
+[1] 0.9744422
+
+[[2]]
+[1] 0.933932
+
+[[3]]
+[1] 0.9427121
+
+[[4]]
+[1] 0.9544425
+
+[[5]]
+[1] 0.9586428
+
+[[6]]
+[1] 0.9618574
+
+[[7]]
+[1] 0.9496309
+
+[[8]]
+[1] 0.9463374
+
+[[9]]
+[1] 0.9917526
+
+[[10]]
+[1] 0.961051
+
+[[11]]
+[1] 0.9206011
+
+[[12]]
+[1] 0.9656467
+
+[[13]]
+[1] 0.9373427
+
+[[14]]
+[1] 0.9470083
+
+[[15]]
+[1] 0.9803593
+
+[[16]]
+[1] 0.9702875
+
+[[17]]
+[1] 0.9561148
+
+[[18]]
+[1] 0.9695994
+
+[[19]]
+[1] 0.9894168
+
+[[20]]
+[1] 0.987014
+
+[[21]]
+[1] 0.9289138
+
+[[22]]
+[1] 0.9669397
+
+[[23]]
+[1] 0.9237885
+
+[[24]]
+[1] 0.9346625
+
+[[25]]
+[1] 0.9381014
+
+[[26]]
+[1] 0.9609007
+
+[[27]]
+[1] 0.9298241
+
+[[28]]
+[1] 0.9585264
+
+[[29]]
+[1] 0.9665638
+
+[[30]]
+[1] 0.9472767
+
+[[31]]
+[1] 0.9613769
+
+[[32]]
+[1] 0.9196689
+
+[[33]]
+[1] 0.957841
+
+[[34]]
+[1] 0.9390468
+
+[[35]]
+[1] 0.9616691
+
+[[36]]
+[1] 0.9685302
+
+[[37]]
+[1] 0.9711792
+
+[[38]]
+[1] 0.9488523
+
+[[39]]
+[1] 0.9573194
+
+[[40]]
+[1] 0.9793875
+
+[[41]]
+[1] 0.9754546
+
+[[42]]
+[1] 0.9723162
+
+[[43]]
+[1] 0.9237703
+
+[[44]]
+[1] 0.9687404
+
+[[45]]
+[1] 0.9691535
+
+[[46]]
+[1] 0.9505294
+
+[[47]]
+[1] 0.9470291
+
+[[48]]
+[1] 0.964703
+
+[[49]]
+[1] 0.949813
+
+[[50]]
+[1] 0.9228065
+
+[[51]]
+[1] 0.961419
+
+[[52]]
+[1] 0.9396825
+
+[[53]]
+[1] 0.9556095
+
+[[54]]
+[1] 0.9642133
+
+[[55]]
+[1] 0.9768913
+
+[[56]]
+[1] 0.9499955
+
+[[57]]
+[1] 0.9657074
+
+[[58]]
+[1] 0.973841
+
+[[59]]
+[1] 0.9659042
+
+[[60]]
+[1] 0.9679232
+
+[[61]]
+[1] 0.9517105
+
+[[62]]
+[1] 0.9633839
+
+[[63]]
+[1] 0.9422939
+
+[[64]]
+[1] 0.9585172
+
+[[65]]
+[1] 0.9673511
+
+[[66]]
+[1] 0.9764099
+
+[[67]]
+[1] 0.9533186
+
+[[68]]
+[1] 0.9570999
+
+[[69]]
+[1] 0.9560113
+
+[[70]]
+[1] 0.9450401
+
+[[71]]
+[1] 0.959831
+
+[[72]]
+[1] 0.9373658
+
+[[73]]
+[1] 0.9457135
+
+[[74]]
+[1] 0.965367
+
+[[75]]
+[1] 0.9506941
+
+[[76]]
+[1] 0.9849121
+
+[[77]]
+[1] 0.9592615
+
+[[78]]
+[1] 0.9632221
+
+[[79]]
+[1] 0.9582885
+
+[[80]]
+[1] 0.9697793
+
+[[81]]
+[1] 0.9660074
+
+[[82]]
+[1] 0.9520753
+
+[[83]]
+[1] 0.9793509
+
+[[84]]
+[1] 0.9662987
+
+[[85]]
+[1] 0.9481464
+
+[[86]]
+[1] 0.9448298
+
+[[87]]
+[1] 0.9215909
+
+[[88]]
+[1] 0.961809
+
+[[89]]
+[1] 0.9443941
+
+[[90]]
+[1] 0.9702993
+
+[[91]]
+[1] 0.903962
+
+[[92]]
+[1] 0.9183086
+
+[[93]]
+[1] 0.9451367
+
+[[94]]
+[1] 0.9602424
+
+[[95]]
+[1] 0.9606474
+
+[[96]]
+[1] 0.9445137
+
+[[97]]
+[1] 0.9449531
+
+[[98]]
+[1] 0.981626
+
+[[99]]
+[1] 0.9400706
+
+[[100]]
+[1] 0.964251
+
+[[101]]
+[1] 0.9566571
+
+[[102]]
+[1] 0.9812447
+
+[[103]]
+[1] 0.9388153
+
+[[104]]
+[1] 0.9739772
+
+[[105]]
+[1] 0.9530138
+
+[[106]]
+[1] 0.9520393
+
+[[107]]
+[1] 0.976264
+
+[[108]]
+[1] 0.982534
+
+[[109]]
+[1] 0.9715603
+
+[[110]]
+[1] 0.9404667
+
+[[111]]
+[1] 0.9817433
+
+[[112]]
+[1] 0.9598988
+
+[[113]]
+[1] 0.9302614
+
+[[114]]
+[1] 0.988092
+
+[[115]]
+[1] 0.9870965
+
+[[116]]
+[1] 0.9388857
+
+[[117]]
+[1] 0.956517
+
+[[118]]
+[1] 0.9549287
+
+[[119]]
+[1] 0.9469081
+
+[[120]]
+[1] 0.9810541
+
+[[121]]
+[1] 0.9823478
+
+[[122]]
+[1] 0.9148224
+
+[[123]]
+[1] 0.9823643
+
+[[124]]
+[1] 0.9253581
+
+[[125]]
+[1] 0.9580296
+
+[[126]]
+[1] 0.8809528
+
+[[127]]
+[1] 0.9233276
+
+[[128]]
+[1] 0.9765978
+
+[[129]]
+[1] 0.93856
+
+[[130]]
+[1] 0.9061609
+
+[[131]]
+[1] 0.964554
+
+[[132]]
+[1] 0.9296965
+
+[[133]]
+[1] 0.9885936
+
+[[134]]
+[1] 0.9630117
+
+[[135]]
+[1] 0.9547135
+
+[[136]]
+[1] 0.9357398
+
+[[137]]
+[1] 0.9681938
+
+[[138]]
+[1] 0.9486889
+
+[[139]]
+[1] 0.967377
+
+[[140]]
+[1] 0.935164
+
+[[141]]
+[1] 0.952875
+
+[[142]]
+[1] 0.9625035
+
+[[143]]
+[1] 0.9453311
+
+[[144]]
+[1] 0.9759695
+
+[[145]]
+[1] 0.9323912
+
+[[146]]
+[1] 0.9495625
+
+[[147]]
+[1] 0.943318
+
+[[148]]
+[1] 0.9808067
+
+[[149]]
+[1] 0.9794818
+
+[[150]]
+[1] 0.9577865
+
+[[151]]
+[1] 0.9425332
+
+[[152]]
+[1] 0.9624784
+
+[[153]]
+[1] 0.9655145
+
+[[154]]
+[1] 0.9479457
+
+[[155]]
+[1] 0.9543496
+
+[[156]]
+[1] 0.8957091
+
+[[157]]
+[1] 0.9750579
+
+[[158]]
+[1] 0.9583675
+
+[[159]]
+[1] 0.9590054
+
+[[160]]
+[1] 0.9467615
+
+[[161]]
+[1] 0.9450237
+
+[[162]]
+[1] 0.9694308
+
+[[163]]
+[1] 0.9884167
+
+[[164]]
+[1] 0.9415284
+
+[[165]]
+[1] 0.9463519
+
+[[166]]
+[1] 0.9651416
+
+[[167]]
+[1] 0.9349038
+
+[[168]]
+[1] 0.9615899
+
+[[169]]
+[1] 0.9584772
+
+[[170]]
+[1] 0.9312471
+
+[[171]]
+[1] 0.9772273
+
+[[172]]
+[1] 0.9462919
+
+[[173]]
+[1] 0.9628342
+
+[[174]]
+[1] 0.9474401
+
+[[175]]
+[1] 0.9176186
+
+[[176]]
+[1] 0.9506477
+
+[[177]]
+[1] 0.9382026
+
+[[178]]
+[1] 0.9703661
+
+[[179]]
+[1] 0.9661562
+
+[[180]]
+[1] 0.9698062
+
+[[181]]
+[1] 0.9910448
+
+[[182]]
+[1] 0.924388
+
+[[183]]
+[1] 0.9672293
+
+[[184]]
+[1] 0.9625698
+
+[[185]]
+[1] 0.9395012
+
+[[186]]
+[1] 0.960268
+
+[[187]]
+[1] 0.9586225
+
+[[188]]
+[1] 0.9492261
+
+[[189]]
+[1] 0.9733492
+
+[[190]]
+[1] 0.9234568
+
+[[191]]
+[1] 0.9519666
+
+[[192]]
+[1] 0.9788657
+
+[[193]]
+[1] 0.9719317
+
+[[194]]
+[1] 0.9447822
+
+[[195]]
+[1] 0.9288415
+
+[[196]]
+[1] 0.9675872
+
+[[197]]
+[1] 0.976027
+
+[[198]]
+[1] 0.9626527
+
+[[199]]
+[1] 0.9807517
+
+[[200]]
+[1] 0.9571052
+
+> save(out,file = "QDA.RData")
+> 
+> proc.time()
+   user  system elapsed 
+507.319 873.617 184.445 

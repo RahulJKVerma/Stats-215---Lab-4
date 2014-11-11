@@ -1,0 +1,263 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(parallel)
+> library(doParallel)
+Loading required package: foreach
+Loading required package: iterators
+> library(foreach)
+> library(rlecuyer)
+> library(glmnet)
+Loading required package: Matrix
+Loaded glmnet 1.9-8
+
+> 
+> working.directory = "~/Documents/lab4/Stats-215---Lab-4"
+> # nCores <- as.numeric(Sys.getenv('NSLOTS'))
+> nCores = 10
+> setwd(working.directory)
+> registerDoParallel(nCores)
+> 
+> source("DataProcessing.R")
+> l = getTrainTestBlock(list(image1, image2, image3),k=3, train.pct = 1,
++                       fix.random = FALSE, standardize = TRUE)
+> data = l[[1]]; rm(image1); rm(image2); rm(image3); gc();
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1289510 68.9    2403845 128.4  1544394  82.5
+Vcells 4710273 36.0   18576626 141.8 23059515 176.0
+> 
+> k = 3; n.images = 3;
+> RNGkind("L'Ecuyer-CMRG")
+> out <- foreach(i = 1:200) %dopar% {
++   cat('Starting', i, 'th job.\n', sep = ' ')
++   train.blocks = sample(n.images*k^2, 15)
++   train.idx = data$blockid %in% train.blocks
++   model = glm(label ~ (NDAI + SD + CORR + DF + CF + BF   + AF + AN)^2, 
++                data = data[train.idx,], 
++                family = binomial(link = "logit"))
++   label.hat = predict(model, data[!train.idx, ], type = "response")
++   auc(data[!train.idx,3], label.hat)
++ }
+Starting 1 th job.
+Starting 2 th job.
+Starting 3 th job.
+Starting 4 th job.
+Starting 5 th job.
+Starting 6 th job.
+Starting 7 th job.
+Starting 8 th job.
+Starting 9 th job.
+Starting 10 th job.
+Starting 12 th job.
+Starting 11 th job.
+Starting 15 th job.
+Starting 20 th job.
+Starting 13 th job.
+Starting 17 th job.
+Starting 19 th job.
+Starting 16 th job.
+Starting 18 th job.
+Starting 14 th job.
+Starting 22 th job.
+Starting 21 th job.
+Starting 23 th job.
+Starting 27 th job.
+Starting 30 th job.
+Starting 25 th job.
+Starting 29 th job.
+Starting 26 th job.
+Starting 28 th job.
+Starting 24 th job.
+Starting 33 th job.
+Starting 37 th job.
+Starting 31 th job.
+Starting 32 th job.
+Starting 40 th job.
+Starting 38 th job.
+Starting 35 th job.
+Starting 39 th job.
+Starting 34 th job.
+Starting 36 th job.
+Starting 50 th job.
+Starting 43 th job.
+Starting 42 th job.
+Starting 47 th job.
+Starting 41 th job.
+Starting 48 th job.
+Starting 45 th job.
+Starting 46 th job.
+Starting 49 th job.
+Starting 51 th job.
+Starting 44 th job.
+Starting 52 th job.
+Starting 57 th job.
+Starting 53 th job.
+Starting 60 th job.
+Starting 58 th job.
+Starting 56 th job.
+Starting 59 th job.
+Starting 55 th job.
+Starting 61 th job.
+Starting 54 th job.
+Starting 62 th job.
+Starting 68 th job.
+Starting 63 th job.
+Starting 67 th job.
+Starting 70 th job.
+Starting 71 th job.
+Starting 66 th job.
+Starting 69 th job.
+Starting 65 th job.
+Starting 72 th job.
+Starting 78 th job.
+Starting 64 th job.
+Starting 73 th job.
+Starting 77 th job.
+Starting 79 th job.
+Starting 80 th job.
+Starting 75 th job.
+Starting 81 th job.
+Starting 76 th job.
+Starting 82 th job.
+Starting 74 th job.
+Starting 88 th job.
+Starting 83 th job.
+Starting 89 th job.
+Starting 87 th job.
+Starting 90 th job.
+Starting 86 th job.
+Starting 85 th job.
+Starting 84 th job.
+Starting 98 th job.
+Starting 92 th job.
+Starting 93 th job.
+Starting 91 th job.
+Starting 100 th job.
+Starting 97 th job.
+Starting 108 th job.
+Starting 96 th job.
+Starting 94 th job.
+Starting 99 th job.
+Starting 95 th job.
+Starting 102 th job.
+Starting 103 th job.
+Starting 101 th job.
+Starting 118 th job.
+Starting 110 th job.
+Starting 107 th job.
+Starting 106 th job.
+Starting 105 th job.
+Starting 104 th job.
+Starting 113 th job.
+Starting 111 th job.
+Starting 109 th job.
+Starting 128 th job.
+Starting 112 th job.
+Starting 120 th job.
+Starting 116 th job.
+Starting 114 th job.
+Starting 123 th job.
+Starting 115 th job.
+Starting 117 th job.
+Starting 138 th job.
+Starting 121 th job.
+Starting 130 th job.
+Starting 122 th job.
+Starting 119 th job.
+Starting 124 th job.
+Starting 126 th job.
+Starting 133 th job.
+Starting 148 th job.
+Starting 125 th job.
+Starting 131 th job.
+Starting 127 th job.
+Starting 140 th job.
+Starting 129 th job.
+Starting 132 th job.
+Starting 143 th job.
+Starting 136 th job.
+Starting 158 th job.
+Starting 141 th job.
+Starting 137 th job.
+Starting 150 th job.
+Starting 135 th job.
+Starting 153 th job.
+Starting 142 th job.
+Starting 139 th job.
+Starting 134 th job.
+Starting 146 th job.
+Starting 168 th job.
+Starting 147 th job.
+Starting 151 th job.
+Starting 160 th job.
+Starting 163 th job.
+Starting 152 th job.
+Starting 145 th job.
+Starting 149 th job.
+Starting 144 th job.
+Starting 156 th job.
+Starting 157 th job.
+Starting 178 th job.
+Starting 161 th job.
+Starting 170 th job.
+Starting 162 th job.
+Starting 173 th job.
+Starting 155 th job.
+Starting 159 th job.
+Starting 154 th job.
+Starting 166 th job.
+Starting 188 th job.
+Starting 167 th job.
+Starting 165 th job.
+Starting 171 th job.
+Starting 180 th job.
+Starting 164 th job.
+Starting 172 th job.
+Starting 183 th job.
+Starting 169 th job.
+Starting 198 th job.
+Starting 176 th job.
+Starting 177 th job.
+Starting 175 th job.
+Starting 190 th job.
+Starting 174 th job.
+Starting 181 th job.
+Starting 193 th job.
+Starting 182 th job.
+Starting 179 th job.
+Starting 186 th job.
+Starting 187 th job.
+Starting 185 th job.
+Starting 191 th job.
+Starting 200 th job.
+Starting 192 th job.
+Starting 184 th job.
+Starting 189 th job.
+Starting 196 th job.
+Starting 197 th job.
+Starting 195 th job.
+Starting 199 th job.
+Starting 194 th job.
+> print(mean(unlist(out)))
+[1] 0.9584566
+> save(out,file = "LogitPoly.RData")
+> 
+> proc.time()
+     user    system   elapsed 
+ 5161.759 27547.090  1217.609 

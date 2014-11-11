@@ -1,0 +1,69 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(parallel)
+> library(doParallel)
+Loading required package: foreach
+Loading required package: iterators
+> library(foreach)
+> library(rlecuyer)
+> library(glmnet)
+Loading required package: Matrix
+Loaded glmnet 1.9-8
+
+> 
+> working.directory = "~/Documents/lab4/Stats-215---Lab-4"
+> nCores <- as.numeric(Sys.getenv('NSLOTS'))
+> # nCores = 8
+> setwd(working.directory)
+> registerDoParallel(nCores)
+> 
+> source("DataProcessing.R")
+> l = getTrainTestBlock(list(image1, image2, image3),k=3, train.pct = 1,
++                       fix.random = TRUE, standardize = TRUE)
+> data = l[[1]]
+> rm(image1); rm(image2); rm(image3); rm(l); gc();
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1289717 68.9    2403845 128.4  1583648  84.6
+Vcells 4710715 36.0   19583168 149.5 24362653 185.9
+> k = 3; n.images = 3;
+> RNGkind("L'Ecuyer-CMRG")
+> out <- foreach(i = 1:200) %dopar% {
++   cat('Starting', i, 'th job.\n', sep = ' ')
++   train.blocks = sample(n.images*k^2, 15)
++   train.idx = data$blockid %in% train.blocks
++   model = cv.glmnet(cbind(model.matrix(~ (NDAI + SD + CORR + DF + CF + 
++                       BF + AF + AN)^2, data[train.idx,]), 
++                       data[train.idx, 4:11]^2), 
++                       as.numeric(data[train.idx,3]), family = "binomial",
++                       standardize = TRUE, intercept = FALSE,
++                       type.measure = "auc",
++                       foldid = ceiling(getFold(data$blockid[train.idx])/3),
++                       parallel = FALSE)
++   label.hat = predict(model, cbind(model.matrix(~ (NDAI + SD + CORR + DF + 
++                       CF + BF + AF + AN)^2, data[!train.idx,]), 
++                       data[!train.idx, 4:11]^2), type = "response")
++   auc(data[!train.idx,3], label.hat)
++ }
+Starting 1 th job.
+Starting 2 th job.
+Starting 3 th job.
+Starting 4 th job.
+Starting 5 th job.
+Starting 6 th job.
+Starting 7 th job.
+Starting 8 th job.
