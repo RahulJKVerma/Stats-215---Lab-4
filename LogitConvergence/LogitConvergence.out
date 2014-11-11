@@ -1,0 +1,1568 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(parallel)
+> library(doParallel)
+Loading required package: foreach
+Loading required package: iterators
+> library(foreach)
+> library(rlecuyer)
+> library(glmnet)
+Loading required package: Matrix
+Loaded glmnet 1.9-8
+
+> 
+> working.directory = "~/Documents/lab4/Stats-215---Lab-4"
+> # nCores <- as.numeric(Sys.getenv('NSLOTS'))
+> nCores = 1
+> setwd(working.directory)
+> registerDoParallel(nCores)
+> 
+> source("DataProcessing.R")
+> l = getTrainTestBlock(list(image1, image2, image3),k=6, train.pct = 1,
++                       fix.random = TRUE, standardize = TRUE)
+> data = l[[1]]
+> 
+> out <- foreach(i = 1:216) %do% {
++   cat('Starting', i, 'th job.\n', sep = ' ')
++   model = glm(label ~ NDAI + SD + CORR + DF + CF + BF   + AF + AN, 
++                data = data[data$blockid <= i,], 
++                family = binomial(link = "logit"))
++   model$coefficients
++ }
+Starting 1 th job.
+Starting 2 th job.
+Starting 3 th job.
+Starting 4 th job.
+Starting 5 th job.
+Starting 6 th job.
+Starting 7 th job.
+Starting 8 th job.
+Starting 9 th job.
+Starting 10 th job.
+Starting 11 th job.
+Starting 12 th job.
+Starting 13 th job.
+Starting 14 th job.
+Starting 15 th job.
+Starting 16 th job.
+Starting 17 th job.
+Starting 18 th job.
+Starting 19 th job.
+Starting 20 th job.
+Starting 21 th job.
+Starting 22 th job.
+Starting 23 th job.
+Starting 24 th job.
+Starting 25 th job.
+Starting 26 th job.
+Starting 27 th job.
+Starting 28 th job.
+Starting 29 th job.
+Starting 30 th job.
+Starting 31 th job.
+Starting 32 th job.
+Starting 33 th job.
+Starting 34 th job.
+Starting 35 th job.
+Starting 36 th job.
+Starting 37 th job.
+Starting 38 th job.
+Starting 39 th job.
+Starting 40 th job.
+Starting 41 th job.
+Starting 42 th job.
+Starting 43 th job.
+Starting 44 th job.
+Starting 45 th job.
+Starting 46 th job.
+Starting 47 th job.
+Starting 48 th job.
+Starting 49 th job.
+Starting 50 th job.
+Starting 51 th job.
+Starting 52 th job.
+Starting 53 th job.
+Starting 54 th job.
+Starting 55 th job.
+Starting 56 th job.
+Starting 57 th job.
+Starting 58 th job.
+Starting 59 th job.
+Starting 60 th job.
+Starting 61 th job.
+Starting 62 th job.
+Starting 63 th job.
+Starting 64 th job.
+Starting 65 th job.
+Starting 66 th job.
+Starting 67 th job.
+Starting 68 th job.
+Starting 69 th job.
+Starting 70 th job.
+Starting 71 th job.
+Starting 72 th job.
+Starting 73 th job.
+Starting 74 th job.
+Starting 75 th job.
+Starting 76 th job.
+Starting 77 th job.
+Starting 78 th job.
+Starting 79 th job.
+Starting 80 th job.
+Starting 81 th job.
+Starting 82 th job.
+Starting 83 th job.
+Starting 84 th job.
+Starting 85 th job.
+Starting 86 th job.
+Starting 87 th job.
+Starting 88 th job.
+Starting 89 th job.
+Starting 90 th job.
+Starting 91 th job.
+Starting 92 th job.
+Starting 93 th job.
+Starting 94 th job.
+Starting 95 th job.
+Starting 96 th job.
+Starting 97 th job.
+Starting 98 th job.
+Starting 99 th job.
+Starting 100 th job.
+Starting 101 th job.
+Starting 102 th job.
+Starting 103 th job.
+Starting 104 th job.
+Starting 105 th job.
+Starting 106 th job.
+Starting 107 th job.
+Starting 108 th job.
+Starting 109 th job.
+Starting 110 th job.
+Starting 111 th job.
+Starting 112 th job.
+Starting 113 th job.
+Starting 114 th job.
+Starting 115 th job.
+Starting 116 th job.
+Starting 117 th job.
+Starting 118 th job.
+Starting 119 th job.
+Starting 120 th job.
+Starting 121 th job.
+Starting 122 th job.
+Starting 123 th job.
+Starting 124 th job.
+Starting 125 th job.
+Starting 126 th job.
+Starting 127 th job.
+Starting 128 th job.
+Starting 129 th job.
+Starting 130 th job.
+Starting 131 th job.
+Starting 132 th job.
+Starting 133 th job.
+Starting 134 th job.
+Starting 135 th job.
+Starting 136 th job.
+Starting 137 th job.
+Starting 138 th job.
+Starting 139 th job.
+Starting 140 th job.
+Starting 141 th job.
+Starting 142 th job.
+Starting 143 th job.
+Starting 144 th job.
+Starting 145 th job.
+Starting 146 th job.
+Starting 147 th job.
+Starting 148 th job.
+Starting 149 th job.
+Starting 150 th job.
+Starting 151 th job.
+Starting 152 th job.
+Starting 153 th job.
+Starting 154 th job.
+Starting 155 th job.
+Starting 156 th job.
+Starting 157 th job.
+Starting 158 th job.
+Starting 159 th job.
+Starting 160 th job.
+Starting 161 th job.
+Starting 162 th job.
+Starting 163 th job.
+Starting 164 th job.
+Starting 165 th job.
+Starting 166 th job.
+Starting 167 th job.
+Starting 168 th job.
+Starting 169 th job.
+Starting 170 th job.
+Starting 171 th job.
+Starting 172 th job.
+Starting 173 th job.
+Starting 174 th job.
+Starting 175 th job.
+Starting 176 th job.
+Starting 177 th job.
+Starting 178 th job.
+Starting 179 th job.
+Starting 180 th job.
+Starting 181 th job.
+Starting 182 th job.
+Starting 183 th job.
+Starting 184 th job.
+Starting 185 th job.
+Starting 186 th job.
+Starting 187 th job.
+Starting 188 th job.
+Starting 189 th job.
+Starting 190 th job.
+Starting 191 th job.
+Starting 192 th job.
+Starting 193 th job.
+Starting 194 th job.
+Starting 195 th job.
+Starting 196 th job.
+Starting 197 th job.
+Starting 198 th job.
+Starting 199 th job.
+Starting 200 th job.
+Starting 201 th job.
+Starting 202 th job.
+Starting 203 th job.
+Starting 204 th job.
+Starting 205 th job.
+Starting 206 th job.
+Starting 207 th job.
+Starting 208 th job.
+Starting 209 th job.
+Starting 210 th job.
+Starting 211 th job.
+Starting 212 th job.
+Starting 213 th job.
+Starting 214 th job.
+Starting 215 th job.
+Starting 216 th job.
+Warning message:
+glm.fit: algorithm did not converge 
+> print(out)
+[[1]]
+  (Intercept)          NDAI            SD          CORR            DF 
+ 2.656606e+01  7.041977e-07 -5.174880e-08 -6.999448e-09 -3.840229e-07 
+           CF            BF            AF            AN 
+-6.263363e-08  1.616135e-08 -2.742439e-07 -1.515065e-06 
+
+[[2]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+  7.5122386  -1.0561223  -1.0590067  -0.2528385   0.9457016  -0.5330718 
+         BF          AF          AN 
+ -1.7663273   2.5425962  -1.2341295 
+
+[[3]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ 0.39639469 -0.13397159 -1.23775902 -0.49590234 -1.00178329  0.07914232 
+         BF          AF          AN 
+-0.70583264  1.40889050 -1.43273032 
+
+[[4]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+  1.9838957  -0.6327435  -1.1815054  -0.2263689  -1.1100549   0.1986247 
+         BF          AF          AN 
+ -0.6860482   1.3292397  -0.8305589 
+
+[[5]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ 3.07737683 -0.82316009 -1.15910909 -0.08010709 -1.01321392  0.29349538 
+         BF          AF          AN 
+-0.76334989  1.21389992 -0.35665290 
+
+[[6]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ 2.46908792 -0.42895856 -1.20210466  0.02420910 -1.21699278  0.28470666 
+         BF          AF          AN 
+-0.76542937  1.12937185 -0.07404116 
+
+[[7]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+  2.7678655  -0.4435045  -1.2489466  -0.1914810  -0.9095375   0.3474795 
+         BF          AF          AN 
+ -0.8185474   1.1256753  -0.4329806 
+
+[[8]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+  2.2100165  -0.5627484  -1.2215378  -0.3210953  -0.3063728   0.1459843 
+         BF          AF          AN 
+ -0.5935133   0.5665472  -0.6215748 
+
+[[9]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ 2.68234315 -0.79714504 -1.17172195 -0.51010245 -0.08359623  0.20990483 
+         BF          AF          AN 
+-0.42935393  0.60553522 -1.02443749 
+
+[[10]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ 3.04007115 -0.89952065 -1.16123423 -0.52225982  0.02197238  0.21146001 
+         BF          AF          AN 
+-0.36926350  0.52067748 -1.00458851 
+
+[[11]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+  0.5299747   1.0451436  -1.4999831   0.2025754  -1.0958606   0.2055856 
+         BF          AF          AN 
+ -0.3358336  -0.1244010   0.8860563 
+
+[[12]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-0.51388532  2.07970163 -1.65497299  0.06038113 -0.92792275  0.01858798 
+         BF          AF          AN 
+ 0.27715469 -0.17168657  0.30357086 
+
+[[13]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-0.51058755  2.08076611 -1.65361755  0.05765050 -0.92313316  0.01778628 
+         BF          AF          AN 
+ 0.27118118 -0.15607171  0.29092630 
+
+[[14]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-0.40257676  2.09974939 -1.62609011  0.08796963 -0.92438614 -0.07566513 
+         BF          AF          AN 
+ 0.29043078  0.34285078 -0.05114735 
+
+[[15]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-0.45737434  2.19659180 -1.63368635  0.17410866 -1.01533861 -0.04269709 
+         BF          AF          AN 
+ 0.21776073  0.37067583  0.11421471 
+
+[[16]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-0.76760998  2.42518410 -1.68072785  0.34729259 -1.29387571  0.08536666 
+         BF          AF          AN 
+-0.09600704 -0.01432646  0.98075927 
+
+[[17]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9382221   2.5781988  -1.7387185   0.4584116  -1.4527357   0.1037725 
+         BF          AF          AN 
+ -0.2050665  -0.3244283   1.5538289 
+
+[[18]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.04183295  2.68524547 -1.77861896  0.47661698 -1.47440315  0.02899011 
+         BF          AF          AN 
+-0.10763190 -0.51861695  1.73994480 
+
+[[19]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.05251853  2.65883594 -1.72870348  0.42995254 -1.44171460  0.04499426 
+         BF          AF          AN 
+-0.06408802 -0.69741077  1.79524951 
+
+[[20]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.13713825  2.62910096 -1.53964033  0.51898418 -1.62093930  0.19356688 
+         BF          AF          AN 
+ 0.03466702 -1.10629020  2.17744197 
+
+[[21]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.29862215  2.73680038 -1.55339801  0.54529080 -1.74746952  0.26902960 
+         BF          AF          AN 
+-0.05280504 -1.20115670  2.37412122 
+
+[[22]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3650557   2.8087827  -1.5780859   0.5725293  -1.8021471   0.2861080 
+         BF          AF          AN 
+ -0.1053344  -1.1780851   2.4438627 
+
+[[23]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.4030854   2.8494107  -1.5956089   0.5901209  -1.8331890   0.2826425 
+         BF          AF          AN 
+ -0.1228385  -1.1884586   2.5064309 
+
+[[24]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3842086   2.8762250  -1.5638698   0.5572196  -1.7660463   0.3388897 
+         BF          AF          AN 
+ -0.2326085  -1.1207436   2.4523012 
+
+[[25]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3287714   2.8514987  -1.4046696   0.3277141  -1.4042774   0.3986839 
+         BF          AF          AN 
+ -0.2088184  -1.7174189   2.5665830 
+
+[[26]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.47859412  2.76041945 -1.30360439  0.21143465 -1.45106908  0.52591325 
+         BF          AF          AN 
+ 0.06629346 -2.88603127  3.19187656 
+
+[[27]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.63284621  2.87753142 -1.31734648  0.11532876 -1.42972496  0.55569068 
+         BF          AF          AN 
+ 0.01500333 -2.71224943  2.93902055 
+
+[[28]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.69409970  2.95620141 -1.32882223  0.06210408 -1.39295189  0.57957309 
+         BF          AF          AN 
+ 0.03240130 -2.60041752  2.72992236 
+
+[[29]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.74596106  2.99190132 -1.33789404  0.01991894 -1.36776177  0.54316838 
+         BF          AF          AN 
+ 0.05688871 -2.55954883  2.63981347 
+
+[[30]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.7800296   3.0045225  -1.3315594  -0.0962960  -1.2405573   0.4593688 
+         BF          AF          AN 
+  0.2341779  -2.7891009   2.5757612 
+
+[[31]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.8022295   3.0948274  -1.2605116  -0.1674024  -1.0186061   0.3838931 
+         BF          AF          AN 
+  0.2767951  -2.9765891   2.6190005 
+
+[[32]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.8859534   3.1603050  -1.2595347  -0.2631288  -0.9745250   0.4360246 
+         BF          AF          AN 
+  0.3817036  -3.2105060   2.5829594 
+
+[[33]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.9546712   3.2307025  -1.2737540  -0.3440090  -0.9248080   0.4632995 
+         BF          AF          AN 
+  0.3658056  -3.1039619   2.3674547 
+
+[[34]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.9619007   3.2655021  -1.1985083  -0.2446930  -1.0039454   0.4482920 
+         BF          AF          AN 
+  0.3836805  -2.9627665   2.3944541 
+
+[[35]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.98406602  3.31263131 -1.06560722 -0.07095161 -1.14275907  0.42279859 
+         BF          AF          AN 
+ 0.26260148 -2.46815981  2.33976513 
+
+[[36]]
+ (Intercept)         NDAI           SD         CORR           DF           CF 
+-1.980028294  3.309349379 -0.967010368 -0.004639457 -1.226711030  0.472852991 
+          BF           AF           AN 
+ 0.223642530 -2.209471188  2.214736451 
+
+[[37]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.49271421  3.24075337 -0.84073669 -0.75370774  0.12688899  0.50235454 
+         BF          AF          AN 
+ 0.07689436 -2.47022666  1.00920501 
+
+[[38]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2870805   3.0520676  -0.4445640  -0.4357727   0.2651364   0.2561119 
+         BF          AF          AN 
+  0.1519489  -2.4971734   1.2340583 
+
+[[39]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.1766809   3.0566809  -0.4287397  -0.5319756   0.4173008   0.4412045 
+         BF          AF          AN 
+  0.0940491  -2.7736933   1.1926707 
+
+[[40]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.20880882  3.04146263 -0.46011575 -0.36215709  0.56473274  0.37978035 
+         BF          AF          AN 
+-0.02046692 -2.62283976  1.35634906 
+
+[[41]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3353452   2.9034961  -0.5185865  -0.1243501   0.7347166   0.1873986 
+         BF          AF          AN 
+ -0.1890965  -2.0564681   1.2865931 
+
+[[42]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.42720672  2.71730445 -0.48712197  0.13107369  0.61790932 -0.03425866 
+         BF          AF          AN 
+-0.13332430 -1.89297039  1.52044885 
+
+[[43]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.38757602  2.75583675 -0.47075002  0.11040674  0.71192669 -0.02119681 
+         BF          AF          AN 
+-0.16450846 -1.92167576  1.49307634 
+
+[[44]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.34315144  2.77546839 -0.38706835  0.12044885  0.73373686  0.05881865 
+         BF          AF          AN 
+-0.22591999 -1.89200953  1.46807268 
+
+[[45]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2543649   2.7830933  -0.3948120   0.0589370   0.8895670   0.1393666 
+         BF          AF          AN 
+ -0.2993267  -2.2195912   1.6452278 
+
+[[46]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.23884770  2.79226540 -0.39156474  0.04639647  0.92467962  0.16070310 
+         BF          AF          AN 
+-0.32431093 -2.28861497  1.69193645 
+
+[[47]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.28192584  2.84061426 -0.39972831  0.06949822  0.92716989  0.13024873 
+         BF          AF          AN 
+-0.34959223 -2.23628063  1.70808085 
+
+[[48]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2981493   2.8676574  -0.3920448   0.1180760   0.9052169   0.1137879 
+         BF          AF          AN 
+ -0.3555683  -2.2242850   1.7716012 
+
+[[49]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.27961676  2.89419885 -0.37378354  0.09053513  0.97160236  0.11990961 
+         BF          AF          AN 
+-0.37104215 -2.23885883  1.74862735 
+
+[[50]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2570913   2.9310040  -0.3600047   0.0861571   1.0364373   0.1328971 
+         BF          AF          AN 
+ -0.4120213  -2.2823315   1.7986847 
+
+[[51]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2358306   2.9384051  -0.3331986   0.2574359   0.9264526   0.1272674 
+         BF          AF          AN 
+ -0.3592202  -2.4903460   2.1647413 
+
+[[52]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2431511   2.9549627  -0.3303708   0.3025408   0.8897507   0.1380604 
+         BF          AF          AN 
+ -0.3618954  -2.5013508   2.2277793 
+
+[[53]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2505819   2.9747633  -0.3289583   0.3511859   0.8624879   0.1364314 
+         BF          AF          AN 
+ -0.3651269  -2.5083696   2.2951710 
+
+[[54]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2670595   2.9972071  -0.3337433   0.3573646   0.8677842   0.1214886 
+         BF          AF          AN 
+ -0.3694402  -2.4894348   2.2953676 
+
+[[55]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2565915   3.0235578  -0.3323183   0.3435075   0.9044591   0.1330078 
+         BF          AF          AN 
+ -0.3716140  -2.4716343   2.2350168 
+
+[[56]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2404371   3.0261706  -0.3197307   0.3604644   0.9076470   0.1400281 
+         BF          AF          AN 
+ -0.3698276  -2.5369673   2.3089305 
+
+[[57]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.1850036   3.0395527  -0.3220277   0.3700087   0.9812925   0.1905479 
+         BF          AF          AN 
+ -0.4372903  -2.8030089   2.5633049 
+
+[[58]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.1918652   3.0439212  -0.3222045   0.3790606   0.9769632   0.1918928 
+         BF          AF          AN 
+ -0.4506589  -2.7903087   2.5698998 
+
+[[59]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.1978943   3.0577738  -0.3220096   0.3870042   0.9726569   0.1974967 
+         BF          AF          AN 
+ -0.4560153  -2.7828132   2.5748032 
+
+[[60]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2095027   3.0727696  -0.3255189   0.3994214   0.9659783   0.1886687 
+         BF          AF          AN 
+ -0.4484004  -2.7801695   2.5853893 
+
+[[61]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2032463   2.9954479  -0.3110516   0.4536354   0.8958523   0.1747986 
+         BF          AF          AN 
+ -0.4495779  -2.7640746   2.6645495 
+
+[[62]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.1786477   2.9989028  -0.3119898   0.4548105   0.9321855   0.1815685 
+         BF          AF          AN 
+ -0.4796874  -2.8258017   2.7278569 
+
+[[63]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.1826017   3.0185793  -0.3142293   0.4567976   0.9502932   0.1877567 
+         BF          AF          AN 
+ -0.4954443  -2.8654751   2.7697899 
+
+[[64]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.1873561   3.0268999  -0.3144426   0.4569936   0.9526039   0.1882831 
+         BF          AF          AN 
+ -0.4989395  -2.8629848   2.7702216 
+
+[[65]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.1986969   3.0435846  -0.3167854   0.4571011   0.9551559   0.1872567 
+         BF          AF          AN 
+ -0.5010817  -2.8604124   2.7700850 
+
+[[66]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2122723   3.0626140  -0.3196680   0.4576119   0.9603025   0.1797030 
+         BF          AF          AN 
+ -0.4998701  -2.8498792   2.7630568 
+
+[[67]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2496425   3.0986035  -0.3256832   0.4721227   0.9511177   0.1809718 
+         BF          AF          AN 
+ -0.4864607  -2.9443020   2.8573236 
+
+[[68]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2703968   3.1194220  -0.3275104   0.4775475   0.9454209   0.1906828 
+         BF          AF          AN 
+ -0.4778176  -2.9818479   2.8837270 
+
+[[69]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3045809   3.1541454  -0.3309912   0.4689610   0.9545842   0.1928414 
+         BF          AF          AN 
+ -0.4751867  -2.9841980   2.8662832 
+
+[[70]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3153899   3.1676542  -0.3330149   0.4656580   0.9582830   0.1930395 
+         BF          AF          AN 
+ -0.4777233  -2.9787242   2.8579935 
+
+[[71]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3263030   3.1826000  -0.3349403   0.4640661   0.9622072   0.1907925 
+         BF          AF          AN 
+ -0.4803961  -2.9679840   2.8487268 
+
+[[72]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3361682   3.1967158  -0.3374408   0.4625474   0.9661661   0.1852452 
+         BF          AF          AN 
+ -0.4737966  -2.9629057   2.8390402 
+
+[[73]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3355100   3.1964879  -0.3367320   0.4583498   0.9678974   0.1853996 
+         BF          AF          AN 
+ -0.4748672  -2.9627133   2.8352479 
+
+[[74]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3130471   3.1847530  -0.3247910   0.4029025   0.9750621   0.1597105 
+         BF          AF          AN 
+ -0.4838048  -2.8095915   2.6370189 
+
+[[75]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.32954316  3.05969843 -0.57245649  0.66905161  0.86245985  0.07876466 
+         BF          AF          AN 
+-0.47439367 -2.41607586  2.45095090 
+
+[[76]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3265196   2.9860653  -0.5766431   0.7385082   0.8094015   0.1261326 
+         BF          AF          AN 
+ -0.5100230  -2.3740780   2.4835433 
+
+[[77]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.3400230   2.9620082  -0.5531123   0.7245900   0.7735803   0.1718111 
+         BF          AF          AN 
+ -0.4882953  -2.2878743   2.3730200 
+
+[[78]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.40883606  2.97277412 -0.52522037  0.86143097  0.77338431  0.06448976 
+         BF          AF          AN 
+-0.38913239 -2.13033484  2.33964111 
+
+[[79]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.41222518  2.97153650 -0.51818059  0.86730908  0.77024952  0.06482094 
+         BF          AF          AN 
+-0.38721215 -2.13866688  2.35625348 
+
+[[80]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.41891867  2.97404422 -0.50093370  0.84249153  0.76034301  0.06799447 
+         BF          AF          AN 
+-0.35102938 -2.11381492  2.28146055 
+
+[[81]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.42607970  2.98769755 -0.50104660  0.87632682  0.74271605  0.04888409 
+         BF          AF          AN 
+-0.35462604 -2.09548358  2.32753281 
+
+[[82]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.43393292  2.99718866 -0.50070354  0.89188836  0.73031471  0.05075225 
+         BF          AF          AN 
+-0.34496722 -2.08961274  2.33342130 
+
+[[83]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.4389329   3.0042101  -0.5006668   0.8954770   0.7286992   0.0514992 
+         BF          AF          AN 
+ -0.3412297  -2.0863720   2.3315649 
+
+[[84]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.45138540  3.01917732 -0.49895643  0.90726026  0.72802821  0.04671294 
+         BF          AF          AN 
+-0.33163684 -2.07112470  2.32493159 
+
+[[85]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.44255963  3.01600862 -0.48118059  0.92043704  0.72796351  0.04325158 
+         BF          AF          AN 
+-0.32203043 -2.07448854  2.33247952 
+
+[[86]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.43738000  3.02132505 -0.44468855  0.94500733  0.71480550  0.04812513 
+         BF          AF          AN 
+-0.30442867 -2.02939399  2.30676976 
+
+[[87]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.44005543  3.02627122 -0.43102211  0.96142967  0.70522224  0.04861559 
+         BF          AF          AN 
+-0.28648617 -2.01725482  2.29973972 
+
+[[88]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.44785384  3.03613641 -0.43046555  0.96739275  0.70295120  0.05147984 
+         BF          AF          AN 
+-0.28217031 -2.00663933  2.29086960 
+
+[[89]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.45177754  3.04205930 -0.43081913  0.96934938  0.70220435  0.05215232 
+         BF          AF          AN 
+-0.27910910 -2.00515731  2.28921498 
+
+[[90]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.45415978  3.04596257 -0.43114291  0.97065741  0.70199784  0.05208887 
+         BF          AF          AN 
+-0.27640957 -2.00573740  2.28919041 
+
+[[91]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.45508350  3.01859644 -0.42393172  0.97810156  0.69337112  0.05766337 
+         BF          AF          AN 
+-0.26017623 -2.03266502  2.30239482 
+
+[[92]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.44825774  2.96911657 -0.40711233  0.99014551  0.68609234  0.05938046 
+         BF          AF          AN 
+-0.25888615 -2.05056269  2.32111736 
+
+[[93]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.29576997  2.85386380 -0.43967799  0.93241896  0.74487111 -0.03253891 
+         BF          AF          AN 
+-0.29807746 -1.91320633  2.14330439 
+
+[[94]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.21360237  2.81815905 -0.46018708  0.92402726  0.76852309 -0.09175833 
+         BF          AF          AN 
+-0.31184058 -1.88534072  2.11803477 
+
+[[95]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+-1.21740723  2.82457844 -0.46089602  0.92522246  0.76845304 -0.09138578 
+         BF          AF          AN 
+-0.31027779 -1.88303335  2.11630712 
+
+[[96]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.2204715   2.8299958  -0.4614961   0.9264348   0.7684293  -0.0915327 
+         BF          AF          AN 
+ -0.3059851  -1.8841201   2.1154222 
+
+[[97]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.1510943   2.7898368  -0.4844618   0.8226843   0.7858295  -0.1360232 
+         BF          AF          AN 
+ -0.3581086  -1.6197487   1.7936549 
+
+[[98]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -1.0376074   2.7424939  -0.5089889   0.8308782   0.8258487  -0.2652609 
+         BF          AF          AN 
+ -0.5342347  -1.1580442   1.5415070 
+
+[[99]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9709973   2.7179427  -0.5266307   0.8717379   0.8540968  -0.3565505 
+         BF          AF          AN 
+ -0.6028265  -1.0786926   1.5921677 
+
+[[100]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9685560   2.7229993  -0.5270580   0.8757819   0.8548704  -0.3669837 
+         BF          AF          AN 
+ -0.5935354  -1.0750652   1.5937412 
+
+[[101]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9727720   2.7313852  -0.5277927   0.8801735   0.8536418  -0.3705403 
+         BF          AF          AN 
+ -0.5943265  -1.0688477   1.5978081 
+
+[[102]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9783326   2.7408889  -0.5290318   0.8799727   0.8548505  -0.3725412 
+         BF          AF          AN 
+ -0.5873035  -1.0721470   1.5971818 
+
+[[103]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9304195   2.7112726  -0.5440722   0.9164818   0.8583184  -0.4554543 
+         BF          AF          AN 
+ -0.6896169  -0.9327004   1.6169215 
+
+[[104]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9381400   2.7160761  -0.5429921   0.9289778   0.8530579  -0.4790156 
+         BF          AF          AN 
+ -0.6949745  -0.9150555   1.6363307 
+
+[[105]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9469136   2.7179011  -0.5392330   0.9489600   0.8335945  -0.4831441 
+         BF          AF          AN 
+ -0.7012263  -0.9119328   1.6686605 
+
+[[106]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9461038   2.7204572  -0.5369961   0.9485450   0.8338652  -0.4835712 
+         BF          AF          AN 
+ -0.6985211  -0.9187727   1.6750760 
+
+[[107]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9465007   2.7209137  -0.5369700   0.9491723   0.8333790  -0.4835901 
+         BF          AF          AN 
+ -0.6988800  -0.9178418   1.6752840 
+
+[[108]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[109]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[110]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[111]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[112]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[113]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[114]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[115]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[116]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[117]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[118]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[119]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[120]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[121]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[122]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[123]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[124]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[125]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[126]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[127]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[128]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[129]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[130]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[131]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[132]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[133]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[134]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[135]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[136]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[137]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[138]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[139]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[140]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[141]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[142]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[143]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[144]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[145]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[146]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[147]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[148]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[149]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[150]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[151]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[152]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[153]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[154]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[155]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[156]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[157]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[158]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[159]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[160]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[161]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[162]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[163]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[164]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[165]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[166]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[167]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[168]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[169]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[170]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[171]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[172]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[173]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[174]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[175]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[176]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[177]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[178]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[179]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[180]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[181]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[182]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[183]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[184]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[185]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[186]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[187]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[188]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[189]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[190]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[191]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[192]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[193]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[194]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[195]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[196]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[197]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[198]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[199]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[200]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[201]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[202]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[203]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[204]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[205]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[206]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[207]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[208]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[209]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[210]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[211]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[212]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[213]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[214]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[215]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+[[216]]
+(Intercept)        NDAI          SD        CORR          DF          CF 
+ -0.9442310   2.7223493  -0.5331481   0.9682488   0.8252408  -0.4899642 
+         BF          AF          AN 
+ -0.6957196  -0.9212982   1.6999812 
+
+> save(out,file = "LogitConvergence.RData")
+> 
+> proc.time()
+    user   system  elapsed 
+1889.182 4510.234  789.275 
