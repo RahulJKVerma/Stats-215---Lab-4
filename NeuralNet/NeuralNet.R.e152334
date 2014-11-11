@@ -1,0 +1,2 @@
+/var/spool/gridengine/execd/scf-sm00/job_scripts/152334: line 1: syntax error near unexpected token `parallel'
+/var/spool/gridengine/execd/scf-sm00/job_scripts/152334: line 1: `library(parallel)'
