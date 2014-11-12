@@ -2,6 +2,7 @@ library(nnet)
 library(MASS)
 library(glmnet)
 library(e1071)
+library(knitr)
 
 setwd("~/Dropbox/School/ST215/lab4p/")
 
@@ -117,7 +118,8 @@ naive.fit = naiveBayes(label ~ NDAI + SD + CORR + DF + CF +
                   BF   + AF + AN,
                 data = train)
 label.hat6 = predict(naive.fit, test, , type = "raw")
-auc(test$label, label.hat6)
+auc(test$label, label.hat6[,2])
+
 ##########################################
 ### 6. Neural Network
 ##########################################
@@ -145,6 +147,19 @@ random.forest.yhat = label.hat7[,2]
 save(random.forest.yhat, file = "random.forest.yhat.RData")
 auc(test$label, label.hat7[,2])
 
+###########################################################################
+### 8. SVM
+###########################################################################
+# Careful, might take a long time
+SVM.fit = svm(label ~ NDAI + SD + CORR + DF + CF + 
+              BF   + AF + AN, 
+            data = train,
+            kernel = "radial",
+            gamma = 0.01,
+            cost = 0.01)
+label.hat8 = predict(SVM.fit, test)
+auc(test$label, label.hat8)
+
 # Save the running time
 a = c("Linear", "Logistic", "PolyLogit", "QDA", "naiveBayes", "neuralNet", "randomForest")
 b = c(0.140, 1.323, 5.299, 0.583, 1.697, 19.995, 42.920)
@@ -154,4 +169,4 @@ save(model.runtime, file = "model.runtime.RData")
 ## This is to produce the table for knitr
 kable(misclassfication.matrix(cutOff(label.hat2), test), digit = 2)
 kable(misclassfication.matrix(cutOff(label.hat7[,2]), test), digit = 2)
-
+kabel(cor(train[,4:11][train$label == 0,]))
