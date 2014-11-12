@@ -57,7 +57,7 @@ We decided that the best way to try and visually observe which camera angle was 
 # Accuracy and AUC
 In term of performance measure, accuracy is a simple yet effective measurement. It simpy means the percentage of time your model classifies correctly. The only downside is that most model return a probability based prediction, and accuracy depends on the threshold at which one cut the probability to classify as positive and negative. One way to fix this dependence on threshold is to pick the threshold with the best possible accuracy. 
 
-The other way is to use area under curve (AUC) of the ROC curve. This measure is independent of threshold. The continuous variable (predictor) does not need to be between 0 and 1. On the down side, AUC is hard to generalize for the case of more than two classes. Also, naive AUC calculation that is based on rectangular approximation can be slow, at $O(n^2)$. If we use the probability based method, and sort the data with respect to the continuous variable, we can get $O(n\log n)$ time, as in the following function:
+The other way is to use area under curve (AUC) of the ROC curve. This measure is independent of threshold. The continuous variable (predictor) does not need to be between 0 and 1. On the down side, AUC is hard to generalize for the case of more than two classes. Also, naive AUC calculation that is based on rectangular approximation can be slow, at $O(n^2)$. If we use the probability based method, and sort the data with respect to the continuous variable, we can get $O(n\log n)$ time. 
 
 ```{r,echo=TRUE,message=FALSE}
 auc3 <- function(truth, preds)
@@ -103,70 +103,139 @@ VI. Optimization Algorithm
   
 Of course not all combination is possible, for example LAR algorithm is only applied for L1 and Elastic Net regularization. Still, we are left with a very wide range of options to choose from. For the scope of this lab, we won't have time to study and implement all the possible combination, and so we heuristically restrict ourselves to some specific set of options. 
 
-In term of models, we try to use Linear Regression, Logistic Regression, QDA, 
-SVM, and naiveBayes, with a focus on Logistic Regression and SVM. For Logistic 
-Regression, we include polynomial and interactive terms, use L1 regularization, with Cross Validation as the tool for picking the best regularization. Cross Validation uses Area Under Curve of ROC curve as a measure type. We use the "glmnet" package, which impliments Coordinate Descent algorithm. 
-
-For each model, we use all three images, each get broken down into 3 by 3 smaller blocks. There are 27 blocks in total. 15 blocks are chosen at random to be used as the training set, the remaining 12 blocks are used as the testing set. Each model is ran 200 times, and the histogram of AUC is reported. 
+For most of the model, we try out of the box implementation with out much calibration. We pay more attention to Logistic Regression, and SVM in particular, which represenst the statistical approach, and optimization approach to classification respectively. For Logistic 
+Regression, we try polynomial and interactive terms, L1 regularization with cross validation as the tool for picking the best regularization. Cross validation uses Area Under Curve of ROC curve as the measurement. We use the "glmnet" package, which impliments Coordinate Descent algorithm. Following is the list of models that we run on our dataset:
 
 Model Specification:
-Model 1: Linear Regression
 
-```
-linreg.fit = lm(label ~ NDAI + SD + CORR + DF + CF + 
-                        BF   + AF + AN, 
-                data = train)
-```
+1. Linear Regression: The response variable (binary 0 and 1 in our case) is a  linear function of X with white noise. 
+2. Logistic Regression: Condition on X, the log odd is linear function of X.
+3. naiveBayes: The input X's are conditional independent given Y.
+4. Quadratic Discriminant Analysis: X for each group is Multivariate Gaussian
+5. Neural Network
+6. Random Forest
+7. Logistic with L1 Loss, CV on AUC
+8. Logistic with interactive terms
+9. Logistic with interactive terms, L1 Loss, CV on AUC, 
+10. Support Vector Machine
 
-Model 2: Logistic Regression
-```
+Some of the models are more of an optimization procedures than a statistical models, namely Neural Network, Random Forest (decision tree), and Support Vector Machine. As such there are really no assumption. We instead check the model assumption for the probabilistic models. For Linear Regression, it is clear that the assumption will not be met for binary responses. However, as we will see Linear Regression thought of as a Least Square method can still perform very well. 
+
+We check the model assumption for Logistic Regression. The log-odd should be linear in each of the inputs. 
+```{r,echo=FALSE, message = FALSE}
+load("train.RData")
+load("test.RData")
+source("PerformanceMetrics.R")
 logreg.fit = glm(label ~ NDAI + SD + CORR + DF + CF +
-                        BF   + AF + AN,
+                              BF   + AF + AN,
                       data = train, family = binomial(link = "logit"))
+label.hat2 = predict(logreg.fit, train, type = "link")
+par(mfrow=c(2,2))
+plotLogoddTruthPreds(train$label, train$NDAI, .xlab = "NDAI")
+plotLogoddTruthPreds(train$label, train$SD, .xlab = "SD")
+plotLogoddTruthPreds(train$label, train$CORR, .xlab = "CORR")
+plotLogoddTruthPreds(train$label, label.hat2, .xlab = "Yhat")
 ```
 
-Model 3: naiveBayes
+Looking at the plots of log-odd (in buckets) versus each of the inputs, we see that the plot of log odd with respect to NDAI, SD, and CORR are not linear. Including quadratic terms would help. This explains why we see a higher performance in QDA, or non-linear methods such as random forest and neural network. 
+
+For naive Bayes, condition on the label equal to 0 and 1, we have the correlation of inputs are
+```{r}
+
 ```
-library(e1071)
-qda.fit = naiveBayes(label ~ NDAI + SD + CORR + DF + CF +
-                   BF   + AF + AN,
-                 data = train)
-```
-Model 4: Quadratic Discriminant Analysis
-```
-qda.fit = lda(label ~ NDAI + SD + CORR + DF + CF +
-                   BF   + AF + AN,
-                 data = train)
-```
-Model 5: Second Degree Polynomial Logistic Regression
-```
-logpol.fit = glm(label ~ (NDAI + SD + CORR + DF + CF +
-                            BF   + AF + AN )^2,
-                 data = train, family = binomial(link = "logit"))
-```
-Model 6: Logistic Regression with Cross Validation using AUC criterion.
-Data is normalized according to the train set here. We will discuss more 
-the cross validation method in Section ?? 
-```
-cvglm.fit = cv.glmnet(as.matrix(train[,4:11]), 
-                      as.numeric(train[,3]), family = "binomial",
-                      standardize = FALSE, intercept = FALSE,
-                      type.measure = "auc",
-                      foldid = ceiling(getFold(train$blockid)/3),
-                      parallel = FALSE)
-```
-Model 7: Similar to Model 4, but including interactive terms
-```
-cvglmpol.fit3 = cv.glmnet(model.matrix(~ (NDAI + SD + CORR + DF + CF +
-                                      BF + AF + AN - 1)^2, train), 
-                       as.numeric(train[,3]), family = "binomial",
-                       standardize = FALSE, intercept = FALSE,
-                       type.measure = "auc",
-                       foldid = ceiling(getFold(train$blockid)/3),
-                       parallel = FALSE)
+It is clearly that the correlation are quite high, thus the assumptions are not met. But still naive Bayes method often perform quite well even when the assumptions are not met. 
+
+For QDA, we need the inputs to be Gaussian condition on the class. Looking at the marginal Q-Q plot with respect to the normal quantiles, we see that none of the inputs have a linear Q-Q plot. So again the assumptions are not met. 
+```{r}
+par(mfrow=c(2,2))
+qqnorm(train$NDAI, ylab = "NDAI")
+qqnorm(train$SD, ylab = "SD")
+qqnorm(train$CORR, ylab = "CORR")
+qqnorm(train$AN, ylab = "AN")
 ```
 
-Model 8: Support Vector Machine
+# 3.3. Cross Validation Result for Different Classifications
+For our data, the rows are not i.i.d. As such we have to be more careful in choosing the train set, test set, and cross validation sets. Our end goal in this data problem is to be able to classify cloud and no cloud in new images. We only have three images, one way to create more observations is to divide each image into k by k smaller images. Doing this, each block can be thought of as a separate image, and we have $3k^2$ images. These newly created images are not totally independent; still, dividing three images into small images should help us in building a more stable model on new images.
 
-Following is the 
-###3.3. 
+In our data, we choose k = 3, as such there are 27 small images. We choose 15 blocks at random to use as train, and leave the remaining as test. We do this 200 times, each time choosing 15 blocks at random, calculating the AUC of the predictor with respect to the label in test set. The result is reported in the box plot below.  
+
+```{r, echo=FALSE}
+load("./LinearModel/LinearModel.RData")
+LinearModelAUC = unlist(out)
+df1 = data.frame(model = rep("LinearModel", length(LinearModelAUC)), 
+                AUC = LinearModelAUC)
+#################
+load("./LogisticModel/LogisticModel.RData")
+LogisticModelAUC = unlist(out)
+df2 = data.frame(model = rep("LogisticModel", length(LogisticModelAUC)), 
+                AUC = LogisticModelAUC)
+#################
+load("./naiveBayes/naiveBayes.RData")
+naiveBayesAUC = unlist(out)
+df3 = data.frame(model = rep("naiveBayes", length(out)),
+                 AUC = naiveBayesAUC)
+#################
+load("./QDA/QDA.RData")
+QDAAUC = unlist(out)
+df4 = data.frame(model = rep("QDA", length(QDAAUC)),
+                AUC = QDAAUC)
+##################
+load("./NeuralNet/NeuralNet.RData")
+NeuralNetworkAUC = sapply(out, unlist)[8,]
+df5 = data.frame(model = rep("NeuralNet", length(out)),
+                 AUC = NeuralNetworkAUC)
+##################
+load("./RandomForest/RandomForest.RData")
+df6 = data.frame(model = rep("RandomForest", nrow(RandomForestAUC)),
+                 AUC = RandomForestAUC[,7])
+
+
+##################
+load("./LogitCV/LogitCV.RData")
+LogitCVAUC = unlist(out)
+df7 = data.frame(model = rep("LogitCV", length(out)),
+                 AUC = LogitCVAUC)
+
+###################
+load("./LogitPoly/LogitPoly.RData")
+LogitPolyAUC = unlist(out)
+df8 = data.frame(model = rep("LogitPoly", length(out)),
+                 AUC = LogitPolyAUC)
+
+
+####################
+load("./LogitPolyCV/LogitPolyCV.RData")
+LogitPolyCVAUC = unlist(out)
+df9 = data.frame(model = rep("LogitPolyCV", length(out)),
+                AUC = LogitPolyCVAUC)
+
+
+
+df = rbind(df1, df2, df3, df4, df5, df6, df8)
+ggplot(data = df, aes(x = model, y = AUC)) + geom_boxplot() + coord_flip()
+
+```
+
+We see that random forest have the highest peformance, followed by logistic with interactive terms, neural network, and QDA. The class of simple models namely linear model, logistic model, and naive Bayes are not as good but not too far behind. 
+
+In term of run time, we have the following table:
+
+
+Wee see that in general simple methods run much faster. QDA seems to have a good combination of performance and computational cost. 
+
+###3.4. Convergence of Parameter Estimation
+For this subsection, we focus on logistic regression. We have 27 small images. We fit the 
+Logistic model for one small image, get the parameter, add one more image, fit the pararam
+
+### 3.5. Missclasification Error
+We first see missclassification error with respect to region in the image. We run Rando
+```{r, echo = FALSE}
+
+load("random.forest.yhat.RData")
+yhat = cutOff(random.forest.yhat)
+par(mfrow=c(3,1))
+plot.missclassified(img.id = 1)
+plot.missclassified(img.id = 2)
+plot.missclassified(img.id = 3)
+```
+
