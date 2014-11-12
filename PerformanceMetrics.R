@@ -201,3 +201,26 @@ plotLogoddTruthPreds = function(truth, preds, m = 100, .xlab = NULL)
   logodd.preds = diff(cumsum(ordered.preds)[idx])/interval.size
   plot(logodd.preds, logodd.truth, xlab = .xlab)
 }
+
+misclassfication.matrix = function(label.hat, test.data, k = 4)
+{
+  # This functions defines k intervals for the range of values in the feature columns of test dataframe.
+  # Once the intervals are defined, the misclassfication (1-accuracy) is calculated for all the ranges
+  # of the individual features and a final matrix is returned.
+  col.names <- c("NDAI","SD","CORR","DF","CF","BF","AF","AN")
+  test.data <- cbind(test.data, label.hat)
+  matrix.final <- matrix(nrow = k, ncol = 8)
+  for (i in c(1:length(col.names)))
+  {   
+    l = c() 
+    groups <- as.numeric(cut(test[,col.names[i]],k))
+    for(p in c(1:k))
+    {   
+      l = c(l, 1 - accuracy(label.hat[groups == p], test.data[groups == p, "label"])) #Change train to train.data
+    }   
+    matrix.final[,i] <- l
+  }   
+  colnames(matrix.final) <- c("NDAI","SD","CORR","DF","CF","BF","AF","AN")
+  rownames(matrix.final) <- seq(1:k)
+  return(matrix.final)
+}
