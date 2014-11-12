@@ -1,3 +1,6 @@
+Github Repository:
+  https://github.com/RahulJKVerma/Stats-215---Lab-4
+
 I. Pre-requisite: 
 Please install these R packages beforehand
   a. dplyr
@@ -26,6 +29,7 @@ train set and evaluate auc or accuracy on the test set. Note that auc should
 apply on the continuous yhat, while accuracy should be apply on the 0,1 yhat. 
 There is a function cutOff to cut a continuous probability vector into 0 and 1.
 
+The WriteupFinal.Rmd is the writeup
 III. Secondary File
 
   1. DataProcessing.R contains two functions that load data and split randomly
