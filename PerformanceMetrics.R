@@ -118,12 +118,12 @@ plot.missclassified = function(img.id = 1, preds = yhat, .train = train,
   # label.hat2 = predict(logreg.fit, data, type = "response")
   # yhat = cutOff(label.hat2)
   # plot.missclassified()
-  data = cbind(rbind(.train, .test), yhat)
+  data = cbind(rbind(.train, .test), preds)
   blockids = seq((img.id - 1)*k^2 + 1, img.id*k^2)
   plot1 = ggplot() + 
     geom_point(data = data[data$blockid %in% blockids, ], 
                aes(x = x, y = y, 
-                   color = factor(label + yhat))) + 
+                   color = factor(label + preds))) + 
     scale_color_discrete(guide = guide_legend(
                                       title = NULL, 
                                       direction = "horizontal",
@@ -131,9 +131,9 @@ plot.missclassified = function(img.id = 1, preds = yhat, .train = train,
                                       label.hjust = 0.5, 
                                       label.vjust = 0.5,
                                       label.theme = element_text(angle = 90)), 
-                         label = c("True Negative","Type I, II Error",
-                                   "True Positive")) +
-    ggtitle(paste("Clasification Error for Image",img.id)) + 
+                         label = c("True Not-Cloud","Type I, II Error",
+                                   "True Cloud")) +
+    ggtitle(paste("Classification Error for Image",img.id)) + 
     theme_bw() +
     theme(
        plot.background = element_blank()

@@ -157,7 +157,7 @@ qqnorm(train$AN, ylab = "AN")
 # 3.3. Cross Validation Result for Different Classifications
 For our data, the rows are not i.i.d. As such we have to be more careful in choosing the train set, test set, and cross validation sets. Our end goal in this data problem is to be able to classify cloud and no cloud in new images. We only have three images, one way to create more observations is to divide each image into k by k smaller images. Doing this, each block can be thought of as a separate image, and we have $3k^2$ images. These newly created images are not totally independent; still, dividing three images into small images should help us in building a more stable model on new images.
 
-In our data, we choose k = 3, as such there are 27 small images. We choose 15 blocks at random to use as train, and leave the remaining as test. We do this 200 times, each time choosing 15 blocks at random, calculating the AUC of the predictor with respect to the label in test set. The result is reported in the box plot below.  
+In our data, we choose k = 3, as such there are 27 small images. We choose 15 blocks at random to use as train, and leave the remaining as test. We do this 200 times, each time choosing 15 blocks at random, calculating the AUC of the predictor with respect to the label in test set. The result is reported in the box plot below. 
 
 ```{r, echo=FALSE}
 load("./LinearModel/LinearModel.RData")
@@ -210,8 +210,12 @@ df9 = data.frame(model = rep("LogitPolyCV", length(out)),
                 AUC = LogitPolyCVAUC)
 
 
+####################
+load("./SVM/SVM.RData")
+df10 = data.frame(model = rep("SVM", length(SVMAUC)),
+                  AUC = SVMAUC)
 
-df = rbind(df1, df2, df3, df4, df5, df6, df8)
+df = rbind(df1, df2, df3, df4, df5, df6, df8, df10)
 ggplot(data = df, aes(x = model, y = AUC)) + geom_boxplot() + coord_flip()
 
 ```
@@ -224,8 +228,18 @@ In term of run time, we have the following table:
 Wee see that in general simple methods run much faster. QDA seems to have a good combination of performance and computational cost. 
 
 ###3.4. Convergence of Parameter Estimation
-For this subsection, we focus on logistic regression. We have 27 small images. We fit the 
-Logistic model for one small image, get the parameter, add one more image, fit the pararam
+Since random forest model does not really return any meaningful parameters, we will work on the logistic regression model for this subsection. We will look at the estimated $\beta$, when using one block to train, two block, and so on until we use all 27 blocks to train the logistic model. The inputs are standardized to zero mean and unit variance. This is just the logistic model with out polynomial terms. 
+```{r, echo = FALSE}
+load("./LogitConvergence/LogitConvergence.RData")
+beta.hat = sapply(out, unlist)
+par(mfrow=c(3,3))
+xnames = names(train)[3:11]; xnames[1] = "(Intercept)"
+for (col.name in xnames)
+{
+  plot(beta.hat[col.name,1:108], xlab = "", ylab = col.name, type = "l", ylim = c(-4, 10))  
+}
+```
+We see that the model is quite stable with respect to adding more blocks into the training data. 
 
 ### 3.5. Missclasification Error
 We first see missclassification error with respect to region in the image. We run Rando
