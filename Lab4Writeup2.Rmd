@@ -15,6 +15,9 @@ When it comes to understanding and predicting global climate change, identificat
 #2. Exploratory Data Analysis
 
 ```{r,echo=FALSE,message=FALSE}
+|          |LinearModel |LogisticModel |naiveBayes |QDA  |NeuralNet |RandomForest |LogitCV |LogitPoly |SVM  |
+|:---------|:-----------|:-------------|:----------|:----|:---------|:------------|:-------|:---------|:----|
+|mean(AUC) |0.94        |0.94          |0.94       |0.96 |0.96      |0.96         |0.94    |0.96      |0.94 |
 library(dplyr)
 library(ggplot2)
 library(corrplot)
@@ -279,6 +282,11 @@ df10 = data.frame(model = rep("SVM", length(SVMAUC)),
 
 df = rbind(df1, df2, df3, df4, df5, df6, df7, df8, df10)
 ggplot(data = df, aes(x = model, y = AUC)) + geom_boxplot() + coord_flip()
+
+l = summarise(group_by(df, model), mean(AUC)); 
+row.names(l) = l$model
+l = t(l)
+l = as.matrix(l)
 
 ```
 
