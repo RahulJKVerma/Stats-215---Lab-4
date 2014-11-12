@@ -1,13 +1,9 @@
 library(nnet)
 library(MASS)
 library(glmnet)
-library(parallel)
-library(doParallel)
-library(foreach)
-nCores = 1
-registerDoParallel(nCores)
+library(e1071)
 
-setwd("~/Dropbox/School/ST215/Lab/lab4/")
+setwd("~/Dropbox/School/ST215/lab4p/")
 
 source("DataProcessing.R")
 source("PerformanceMetrics.R")
@@ -15,37 +11,41 @@ l = getTrainTestBlock(list(image1, image2, image3), k = 3,
                       train.pct = 15/27, fix.random = TRUE, 
                       standardize = TRUE)
 train = l[[1]]; test = l[[2]]; rm(l);
+
 ########################################################################
 ### 1. Linear Regression
 ########################################################################
 linreg.fit = lm(label ~ NDAI + SD + CORR + DF + CF + 
                         BF   + AF + AN, 
                 data = train)
+
 label.hat = predict.lm(linreg.fit, test)
+
 ### Measuring Linear Regression Performance
 auc(test$label, label.hat)
 accuracy(cutOff(label.hat,0.5), test$label)
-# meanError(cutOff(label.hat), test$label)
+# meanError(cutOff(label.hat), test$label), used for case of 3 classes
 ### Picking the best cut off threshold
 cutOffGridSearch(test$label, label.hat, method = accuracy)
 
 #######################################################################
 ### 2. Logistic Regression
 #######################################################################
+
 logreg.fit = glm(label ~ NDAI + SD + CORR + DF + CF +
                               BF   + AF + AN,
                       data = train, family = binomial(link = "logit"))
+
 label.hat2 = predict(logreg.fit, test, type = "response")
 auc(test$label, label.hat2)
 accuracy(cutOff(label.hat2), test$label)
 
-plot(label.hat2, test$label)
-ggplot() + geom_density(aes(x = label.hat2)) 
-
 ### 2.2. Polynomial Logistic
+
 logpol.fit = glm(label ~ (NDAI + SD + CORR + DF + CF +
                             BF   + AF + AN )^2,
                  data = train, family = binomial(link = "logit"))
+
 label.hat22 = as.numeric(predict(logpol.fit, test, type = "response"))
 auc(test$label, label.hat22)
 accuracy(cutOff(label.hat22), test$label)
@@ -86,23 +86,72 @@ accuracy(cutOff(label.hat42), test$label)
 
 ### 4.3. GLMNET Polynomial
 cvglm.fit3 = cv.glmnet(model.matrix(~ (NDAI + SD + CORR + DF + CF +
-                                      BF + AF + AN - 1), train), 
+                                      BF + AF + AN )^2, train), 
                        as.numeric(train[,3]), family = "binomial",
-                       standardize = FALSE, intercept = FALSE,
+                       standardize = TRUE, intercept = FALSE,
                        type.measure = "auc",
                        foldid = ceiling(getFold(train$blockid)/3),
                        parallel = FALSE)
+
 label.hat43 = predict(cvglm.fit3, model.matrix(~ (NDAI + SD + CORR + 
-                      DF + CF + BF + AF + AN - 1), test), type = "response")
+                      DF + CF + BF + AF + AN )^2, test), type = "response")
 auc(test$label, label.hat43)
 
 ##########################################################################
 ### 5. Linear Discriminant Analysis
 ##########################################################################
+
 qda.fit = lda(label ~ NDAI + SD + CORR + DF + CF +
-                   BF   + AF + AN,
+                   BF + AF + AN,
                  data = train)
+
 label.hat5 = (predict(qda.fit, test))
 auc(test$label, label.hat5$x)
 accuracy(test$label, label.hat5$class)
+
+##########################################################################
+### 6. naiveBayes
+##########################################################################
+
+naive.fit = naiveBayes(label ~ NDAI + SD + CORR + DF + CF +
+                  BF   + AF + AN,
+                data = train)
+label.hat6 = predict(naive.fit, test, , type = "raw")
+auc(test$label, label.hat6)
+##########################################
+### 6. Neural Network
+##########################################
+
+nnet.fit = nnet(label ~ NDAI + SD + CORR + DF + CF + 
+                        BF + AF + AN, 
+                data = train, linout = TRUE,
+                size = 10)
+
+label.hat6 = predict(nnet.fit, test)
+auc(test$label, label.hat6)
+accuracy(test$label, cutOff(label.hat6))
+
+########################################################
+### 7. Random Forest
+########################################################
+library(randomForest)
+forest.fit = randomForest(factor(label) ~ NDAI + SD + CORR + DF +
+                            CF + BF + AF + AN,
+                          data = train,
+                          ntree = 160)
+
+label.hat7 = predict(forest.fit, test, type = "prob")
+random.forest.yhat = label.hat7[,2]
+save(random.forest.yhat, file = "random.forest.yhat.RData")
+auc(test$label, label.hat7[,2])
+
+# Save the running time
+a = c("Linear", "Logistic", "PolyLogit", "QDA", "naiveBayes", "neuralNet", "randomForest")
+b = c(0.140, 1.323, 5.299, 0.583, 1.697, 19.995, 42.920)
+model.runtime = data.frame(model = a, runtime = b)
+save(model.runtime, file = "model.runtime.RData")
+
+## This is to produce the table for knitr
+kable(misclassfication.matrix(cutOff(label.hat2), test), digit = 2)
+kable(misclassfication.matrix(cutOff(label.hat7[,2]), test), digit = 2)
 
