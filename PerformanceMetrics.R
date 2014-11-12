@@ -133,10 +133,19 @@ plot.missclassified = function(img.id = 1, preds = yhat, .train = train,
                                       label.theme = element_text(angle = 90)), 
                          label = c("True Negative","Type I, II Error",
                                    "True Positive")) +
-    ggtitle(paste("Clasification Error for Image",img.id, 
-                  ". Black border region is train data"))
-  
-   
+    ggtitle(paste("Clasification Error for Image",img.id)) + 
+    theme_bw() +
+    theme(
+       plot.background = element_blank()
+      ,panel.grid.major = element_blank()
+      ,panel.grid.minor = element_blank()
+      ,panel.border = element_blank()
+      ,axis.ticks = element_blank()
+      ,axis.text.x = element_blank()
+      ,axis.text.y = element_blank()
+    ) + 
+    xlab("") + ylab("")
+
   for (blockid in unique(.train$blockid))
   {
     if (blockid %in% blockids)

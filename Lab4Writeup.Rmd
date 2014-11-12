@@ -124,6 +124,7 @@ Some of the models are more of an optimization procedures than a statistical mod
 We check the model assumption for Logistic Regression. The log-odd should be linear in each of the inputs. 
 ```{r,echo=FALSE, message = FALSE}
 load("train.RData")
+load("test.RData")
 source("PerformanceMetrics.R")
 logreg.fit = glm(label ~ NDAI + SD + CORR + DF + CF +
                               BF   + AF + AN,
@@ -218,28 +219,23 @@ ggplot(data = df, aes(x = model, y = AUC)) + geom_boxplot() + coord_flip()
 We see that random forest have the highest peformance, followed by logistic with interactive terms, neural network, and QDA. The class of simple models namely linear model, logistic model, and naive Bayes are not as good but not too far behind. 
 
 In term of run time, we have the following table:
-$$
-  \begin{table}[ht]
-  \centering
-  \begin{tabular}{rlr}
-    \hline
-   & model & runtime \\ 
-  \hline
-    1 & Linear & 0.14 \\ 
-    2 & Logistic & 1.32 \\ 
-    3 & PolyLogit & 5.30 \\ 
-    4 & QDA & 0.58 \\ 
-    5 & naiveBayes & 1.70 \\ 
-    6 & neuralNet & 20.00 \\ 
-    7 & randomForest & 42.92 \\ 
-   \hline
-  \end{tabular}
-  \end{table}
-$$
+
 
 Wee see that in general simple methods run much faster. QDA seems to have a good combination of performance and computational cost. 
 
 ###3.4. Convergence of Parameter Estimation
+For this subsection, we focus on logistic regression. We have 27 small images. We fit the 
+Logistic model for one small image, get the parameter, add one more image, fit the pararam
 
+### 3.5. Missclasification Error
+We first see missclassification error with respect to region in the image. We run Rando
+```{r, echo = FALSE}
 
+load("random.forest.yhat.RData")
+yhat = cutOff(random.forest.yhat)
+par(mfrow=c(3,1))
+plot.missclassified(img.id = 1)
+plot.missclassified(img.id = 2)
+plot.missclassified(img.id = 3)
+```
 
