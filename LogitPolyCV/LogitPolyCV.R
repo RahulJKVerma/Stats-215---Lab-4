@@ -17,20 +17,20 @@ data = l[[1]]
 rm(image1); rm(image2); rm(image3); rm(l); gc();
 k = 3; n.images = 3;
 RNGkind("L'Ecuyer-CMRG")
-out <- foreach(i = 1:200) %dopar% {
+out <- foreach(i = 1:20) %dopar% {
   cat('Starting', i, 'th job.\n', sep = ' ')
   train.blocks = sample(n.images*k^2, 15)
   train.idx = data$blockid %in% train.blocks
-  model = cv.glmnet(model.matrix(~ (NDAI + SD + CORR + DF + CF + 
-                      BF + AF + AN)^2, data[train.idx,]), 
+  model = cv.glmnet(model.matrix( ~ (NDAI + SD + CORR + DF + CF + 
+                      BF + AF + AN - 1)^2, data[train.idx,]), 
                       as.numeric(data[train.idx,3]), family = "binomial",
-                      standardize = FALSE, intercept = FALSE,
+                      standardize = TRUE, intercept = FALSE,
                       type.measure = "auc",
                       foldid = ceiling(getFold(data$blockid[train.idx])/3),
                       parallel = FALSE)
-  label.hat = predict(model, model.matrix(~ (NDAI + SD + CORR + DF + CF + 
-                      BF + AF + AN)^2, data[!train.idx,]), type = "response")
+  label.hat = predict(model, model.matrix( ~ (NDAI + SD + CORR + DF + CF + 
+                      BF + AF + AN - 1)^2, data[!train.idx,]), type = "response")
   glmnet::auc(data[!train.idx,3], label.hat)
 }
 print(mean(unlist(out)))
-save(out,file = "LogitPolyCV.RData")
+save(out,file = "LogitPolyCV2.RData")
