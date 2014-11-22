@@ -19,7 +19,7 @@ Github Repository:
   > git clone https://github.com/RahulJKVerma/Stats-215---Lab-4
 
   b. Submit the cluster.sh to cluster possibly in parallel
-  > qsub -pe smp 5 job.sh
+  > qsub -pe smp 5 cluster.sh
   It will take about 10 hours to finish. If you want faster result, you can edit
   cluster.sh to set number of job for SVM = 0. SVM takes 1-2 hour to run each
   job. With no SVM you should expect ~ 3 hours to finish. 
