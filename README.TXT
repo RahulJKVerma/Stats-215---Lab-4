@@ -5,10 +5,13 @@ Github Repository:
 
 1. Overview
   a. Please install the packages as mentioned in Pre-requisite below.
-  b. We use Rmarkdown to create the writeup. The first step is to open
+  b. We use Rmarkdown to create the writeup. 
+  The first step is to open
   WriteupFinal2.Rmd in RStudio, change the working directory at line 28,
-  and try to compile it with the Knit PDF
+  and try to compile it with Knit PDF
   (recommended) or Knit Html, see if it works as expected. 
+  Note: RMarkdown is not consistent, the plots might look out of place in your
+  computer. To fix it you might need to resize the figure height and width. 
 
 2. Reproduce
   We updated WriteupFinal.Rmd to WriteupFinal2.Rmd to make it more reproducible.
@@ -18,6 +21,9 @@ Github Repository:
   folder (the one contain WriteupFinal2.RMD) such that we have image1.txt,
   image2.txt, and image3.txt
   > git clone https://github.com/RahulJKVerma/Stats-215---Lab-4
+  Tip: Use scp to copy files from your computer to cluster. On your computer
+  type e.g.
+  > scp file.abc binyu@arwen:~/Documents/
 
   b. Submit the cluster.sh to cluster possibly in parallel
   > qsub -pe smp 5 cluster.sh
