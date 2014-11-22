@@ -4,9 +4,10 @@ Github Repository:
 
 
 1. Overview
-  Please install the packages as mentioned in Pre-requisite below.
-  We use Rmarkdown to create the writeup. The first step is to open
-  WriteupFinal2.Rmd in RStudio, and try to compile it with the Knit PDF
+  a. Please install the packages as mentioned in Pre-requisite below.
+  b. We use Rmarkdown to create the writeup. The first step is to open
+  WriteupFinal2.Rmd in RStudio, change the working directory at line 28,
+  and try to compile it with the Knit PDF
   (recommended) or Knit Html, see if it works as expected. 
 
 2. Reproduce
