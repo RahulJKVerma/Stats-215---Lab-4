@@ -1,3 +1,35 @@
+Updated Readme on Nov 22nd
+Github Repository:
+  https://github.com/RahulJKVerma/Stats-215---Lab-4
+
+
+1. Overview
+  Please install the packages as mentioned in Pre-requisite below.
+  We use Rmarkdown to create the writeup. The first step is to open
+  WriteupFinal2.Rmd in RStudio, and try to compile it with the Knit PDF
+  (recommended) or Knit Html, see if it works as expected. 
+
+2. Reproduce
+  We updated WriteupFinal.Rmd to WriteupFinal2.Rmd to make it more reproducible.
+  You will need to run one job on cluster to generate the new model performance
+  for the new data. You will need to log on to cluster:
+  a. Clone git repository above. Copy the new images to the working directory
+  folder (the one contain WriteupFinal2.RMD) such that we have image1.txt,
+  image2.txt, and image3.txt
+  > git clone https://github.com/RahulJKVerma/Stats-215---Lab-4
+
+  b. Submit the cluster.sh to cluster possibly in parallel
+  > qsub -pe smp 5 job.sh
+  It will take about 10 hours to finish. If you want faster result, you can edit
+  cluster.sh to set number of job for SVM = 0. SVM takes 1-2 hour to run each
+  job. With no SVM you should expect ~ 3 hours to finish. 
+
+  c. Go to Rstudio now, and run WriteupFinal2.Rmd
+
+##############################################################################
+### Original README
+##############################################################################
+
 Github Repository:
   https://github.com/RahulJKVerma/Stats-215---Lab-4
 
