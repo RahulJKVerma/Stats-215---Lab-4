@@ -6,7 +6,7 @@ export DIR="~/Documents/Lab4Fixed/Stats-215---Lab-4/"
 export NJOBS_HIGH=200
 # Number of jobs for medium models: naiveBayes, LogitPoly, RandomForest, NeuralNet
 # A few minutes per job
-export NJOBS_MED=50
+export NJOBS_MED=200
 # Number of jobs for SVM
 # Painfully slow. 1 or 2 hour each. Set to 0 if you want to skip. 
 export NJOBS_LOW=5
